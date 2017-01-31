@@ -1,0 +1,10 @@
+# Ignore .DS_Store files created by mac
+.DS_Store
+
+# Ignore any zip or xpi files
+*.zip
+*.xpi
+
+# Ignore files created by Markdown Viewer
+.git
+node_modules

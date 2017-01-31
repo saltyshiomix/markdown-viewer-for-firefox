@@ -1,0 +1,15 @@
+{
+  "title": "Markdown Viewer for Firefox",
+  "name": "markdown-viewer",
+  "version": "0.0.1",
+  "description": "Markdown viewer for Firefox",
+  "main": "index.js",
+  "author": "Yoshihide Shiono",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MIT",
+  "keywords": [
+    "markdown"
+  ]
+}
