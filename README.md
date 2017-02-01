@@ -1,5 +1,5 @@
 # GitHub like Markdown Viewer for Firefox add-on
-![Markdown Viewer Feature Image](http://imgur.com/a/ah2hQ)
+![Markdown Viewer for Firefox add-on Image](http://i.imgur.com/JX0XS1G.png)
 
 ## Install
 - Download latest `signed/markdown_viewer_for_firefox-*-fx.xpi`
