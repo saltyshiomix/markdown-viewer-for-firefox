@@ -11,13 +11,15 @@ Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 
 var registrar = components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+var marked = require('resource://markdown-viewer/data/js/marked.js');
 
+// For Linux
 function MarkdownMimeTypeObserver() {}
 
 MarkdownMimeTypeObserver.prototype = {
-    classDescription: "text/markdown to text/plain stream converter",
-    classID: components.ID("{22e1de77-b21a-11e3-a5e2-0800200c9a66}"),
-    contractID: "@mozilla.org/streamconv;1?from=text/markdown&to=*/*",
+    classDescription: 'text/markdown to text/plain stream converter',
+    classID: components.ID('{22e1de77-b21a-11e3-a5e2-0800200c9a66}'),
+    contractID: '@mozilla.org/streamconv;1?from=text/markdown&to=*/*',
 
     _xpcom_factory: {
         createInstance: function(outer, iid) {
@@ -44,16 +46,16 @@ MarkdownMimeTypeObserver.prototype = {
 
     onStartRequest: function(aRequest, aContext) {
         console.log('MarkdownMimeTypeObserver: onStartRequest');
-        this.html = "";
+        this.html = '';
         this.uri = aRequest.QueryInterface(Ci.nsIChannel).URI.spec;
         this.channel = aRequest;
-        this.channel.contentType = "text/plain";
+        this.channel.contentType = 'text/plain';
         this.listener.onStartRequest(this.channel, aContext);
     },
 
     onStopRequest: function(aRequest, aContext, aStatusCode) {
         console.log('MarkdownMimeTypeObserver: onStopRequest');
-        var sis = Cc["@mozilla.org/io/string-input-stream;1"].createInstance(Ci.nsIStringInputStream);
+        var sis = Cc['@mozilla.org/io/string-input-stream;1'].createInstance(Ci.nsIStringInputStream);
         sis.setData(this.html, this.html.length);
         this.listener.onDataAvailable(this.channel, aContext, sis, 0, this.html.length);
         this.listener.onStopRequest(this.channel, aContext, aStatusCode);
@@ -61,7 +63,7 @@ MarkdownMimeTypeObserver.prototype = {
 
     onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
         console.log('MarkdownMimeTypeObserver: onDataAvailable');
-        var si = Cc["@mozilla.org/scriptableinputstream;1"].createInstance();
+        var si = Cc['@mozilla.org/scriptableinputstream;1'].createInstance();
         si = si.QueryInterface(Ci.nsIScriptableInputStream);
         si.init(aInputStream);
         this.html += si.read(aCount);
@@ -81,9 +83,11 @@ MarkdownMimeTypeObserver.prototype = {
     }
 };
 
-const MarkdownMimeTypeObserverFactory = Object.freeze({
+var MarkdownMimeTypeObserverFactory = Object.freeze({
   createInstance: function(aOuter, aIID) {
-    if (aOuter) { throw Cr.NS_ERROR_NO_AGGREGATION; }
+    if (aOuter) {
+        throw Cr.NS_ERROR_NO_AGGREGATION;
+    }
     return new MarkdownMimeTypeObserver();
   },
   loadFactory: function (aLock) {},
@@ -98,9 +102,6 @@ registrar.registerFactory(
     MarkdownMimeTypeObserverFactory
 );
 
-
-
-
 var MarkdownDocumentObserver = Class({
     extends: xpcom.Unknown,
     interfaces: ['nsIObserver'],
@@ -109,8 +110,8 @@ var MarkdownDocumentObserver = Class({
 
     observe: function(aSubject, aTopic, aData) {
         console.log('MarkdownDocumentObserver: observing...');
-        if (/\.(md|markdown)$/.test(tabs.activeTab.url)
-                && ! /view-source:+/.test(tabs.activeTab.url)) {
+        if (!/view-source:+/.test(tabs.activeTab.url)
+                && /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/.test(tabs.activeTab.url)) {
             Services.io
                 .newChannelFromURI(Services.io.newURI(tabs.activeTab.url, null, null))
                 .asyncOpen(this, null);
@@ -125,6 +126,13 @@ var MarkdownDocumentObserver = Class({
     onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
         console.log('MarkdownDocumentObserver: onDataAvailable');
 
+        this.content = '';
+        var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
+
+        if (browser.contentDocument.contentType === 'text/html') {
+            return;
+        }
+
         try {
             var ConverterStream = CC('@mozilla.org/intl/converter-input-stream;1', 'nsIConverterInputStream', 'init');
             var cs = new ConverterStream(aInputStream, 'utf-8', 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
@@ -138,15 +146,30 @@ var MarkdownDocumentObserver = Class({
             finally {
                 cs.close();
 
+                // I don't know why this is needed
                 var content = this.content;
-                // console.log(content);
-
-                var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
 
                 browser.contentWindow.addEventListener('load', function load() {
                     browser.contentWindow.removeEventListener('load', load, false);
 
-                    browser.contentDocument.body.innerHTML = 'Hello, markdown!';
+                    browser.contentDocument.body.innerHTML = '';
+
+                    browser.contentDocument.head.innerHTML = `
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">
+`;
+
+                    browser.contentDocument.body.innerHTML = `
+<div class="container">
+    <article class="markdown-body">
+        ${marked(content)}
+    </article>
+</div>
+`;
+
                 }, false);
             }
         }
@@ -178,12 +201,3 @@ Services.obs.addObserver(function() {
 
     mdObserver.unregister();
 }, 'xpcom-will-shutdown');
-
-
-
-
-
-
-
-
-
