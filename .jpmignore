@@ -7,4 +7,5 @@
 
 # Ignore files created by Markdown Viewer
 .git
+.gitignore
 node_modules

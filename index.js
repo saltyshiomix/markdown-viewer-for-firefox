@@ -133,7 +133,7 @@ function MarkdownMimeTypeObserver() {}
 
 MarkdownMimeTypeObserver.prototype = {
     classDescription: 'text/markdown to text/plain stream converter',
-    classID: components.ID('{22e1de77-b21a-11e3-a5e2-0800200c9a66}'),
+    classID: components.ID('{315F060C-7489-48CD-835B-5A3DA6CB3D85}'),
     contractID: '@mozilla.org/streamconv;1?from=text/markdown&to=*/*',
 
     _xpcom_factory: {
