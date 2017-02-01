@@ -224,8 +224,8 @@ var MarkdownDocumentObserver = Class({
     get wrappedJSObject() this,
 
     observe: function(aSubject, aTopic, aData) {
-        if (!/view-source:+/.test(tabs.activeTab.url)
-                && /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/.test(tabs.activeTab.url)) {
+        if (!/view-source:+/i.test(tabs.activeTab.url)
+                && /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i.test(tabs.activeTab.url)) {
             Services.io
                 .newChannelFromURI(Services.io.newURI(tabs.activeTab.url, null, null))
                 .asyncOpen(this, null);
