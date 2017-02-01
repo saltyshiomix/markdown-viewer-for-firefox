@@ -907,3 +907,13 @@ section {
 .emojione {
   margin: 0 .1em -.2ex;
 }
+
+li.gfm-checkbox {
+  list-style: none;
+}
+
+li.gfm-checkbox > input[type="checkbox"] {
+  margin-left: -18px;
+  margin-right: 1px;
+  vertical-align: 1px;
+}

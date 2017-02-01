@@ -54,6 +54,12 @@ renderer.list = function(body, ordered) {
 };
 
 renderer.listitem = function(text) {
+    if (text.indexOf('[ ]') !== -1) {
+        return '<li class="gfm-checkbox">' + emojione.toImage(text.replace('[ ]', '<input type="checkbox" disabled>')) + '</li>\n';
+    }
+    if (text.indexOf('[x]') !== -1) {
+        return '<li class="gfm-checkbox">' + emojione.toImage(text.replace('[x]', '<input type="checkbox" checked disabled>')) + '</li>\n';
+    }
     return '<li>' + emojione.toImage(text) + '</li>\n';
 };
 
