@@ -10,12 +10,6 @@ var tabUtils = require('sdk/tabs/utils');
 Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 
-var ConverterStream = CC(
-    '@mozilla.org/intl/converter-input-stream;1',
-    'nsIConverterInputStream',
-    'init'
-);
-
 var registrar = components.manager.QueryInterface(Ci.nsIComponentRegistrar);
 
 function MarkdownMimeTypeObserver() {}
@@ -71,6 +65,9 @@ MarkdownMimeTypeObserver.prototype = {
         si = si.QueryInterface(Ci.nsIScriptableInputStream);
         si.init(aInputStream);
         this.html += si.read(aCount);
+
+        // Fire the event
+        Services.obs.notifyObservers({}, 'chrome-document-global-created', aInputStream);
     },
 
     asyncConvertData: function(aFromType, aToType, aListener, aCtxt) {
@@ -101,79 +98,12 @@ registrar.registerFactory(
     MarkdownMimeTypeObserverFactory
 );
 
-// function MarkdownConverter() {
-//     this.content = '';
-// }
 
-// MarkdownConverter.prototype = {
-//     QueryInterface: XPCOMUtils.generateQI([
-//         Ci.nsIStreamListener,
-//         Ci.nsIRequestObserver
-//     ]),
-//     onStartRequest: function(aRequest, aContext) {},
-//     onStopRequest: function(aRequest, aContext, aStatusCode) {},
-//     onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
-//         console.log('available');
-//         try {
-//             var cs = new ConverterStream(aInputStream, 'utf-8', 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 
-//             try {
-//                 var str = {};
-//                 while (cs.readString(4096, str)) {
-//                     this.content += str.value;
-//                 }
-//             }
-//             finally {
-//                 cs.close();
-
-//                 var content = this.content;
-//                 console.log(content);
-
-//                 var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
-
-//                 browser.contentWindow.addEventListener('load', function load() {
-//                     browser.contentWindow.removeEventListener('load', load, false);
-
-//                     browser.contentDocument.body.innerHTML = 'hello world';
-//                 }, false);
-//             }
-//         }
-//         catch (ex) {
-//             console.error('data: ', ex.message, ex);
-//         }
-//     }
-// };
-
-var MarkdownDocumentStreamListener = Class({
-    extends: xpcom.Unknown,
-    interfaces: [
-        // 'nsIObserver',
-        'nsIStreamListener',
-        'nsIRequestObserver'
-    ],
-    get wrappedJSObject() this,
-
-    onStartRequest: function(aRequest, aContext) {
-        console.log('MarkdownDocumentStreamListener: onStartRequest');
-    },
-    onStopRequest: function(aRequest, aContext, aStatusCode) {
-        console.log('MarkdownDocumentStreamListener: onStopRequest');
-    },
-    onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
-        console.log('MarkdownDocumentStreamListener: onDataAvailable');
-    },
-    initialize: function() {
-        console.log('MarkdownDocumentStreamListener: initialized');
-    }
-});
 
 var MarkdownDocumentObserver = Class({
     extends: xpcom.Unknown,
-    interfaces: [
-        'nsIObserver',
-        'nsIStreamListener',
-        'nsIRequestObserver'
-    ],
+    interfaces: ['nsIObserver'],
     topic: 'chrome-document-global-created',
     get wrappedJSObject() this,
 
@@ -183,7 +113,7 @@ var MarkdownDocumentObserver = Class({
                 && ! /view-source:+/.test(tabs.activeTab.url)) {
             Services.io
                 .newChannelFromURI(Services.io.newURI(tabs.activeTab.url, null, null))
-                .asyncOpen(new MarkdownDocumentStreamListener(), null);
+                .asyncOpen(this, null);
         }
     },
     onStartRequest: function(aRequest, aContext) {
@@ -194,33 +124,35 @@ var MarkdownDocumentObserver = Class({
     },
     onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
         console.log('MarkdownDocumentObserver: onDataAvailable');
-        // try {
-        //     var cs = new ConverterStream(aInputStream, 'utf-8', 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 
-        //     try {
-        //         var str = {};
-        //         while (cs.readString(4096, str)) {
-        //             this.content += str.value;
-        //         }
-        //     }
-        //     finally {
-        //         cs.close();
+        try {
+            var ConverterStream = CC('@mozilla.org/intl/converter-input-stream;1', 'nsIConverterInputStream', 'init');
+            var cs = new ConverterStream(aInputStream, 'utf-8', 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 
-        //         var content = this.content;
-        //         console.log(content);
+            try {
+                var str = {};
+                while (cs.readString(4096, str)) {
+                    this.content += str.value;
+                }
+            }
+            finally {
+                cs.close();
 
-        //         var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
+                var content = this.content;
+                // console.log(content);
 
-        //         browser.contentWindow.addEventListener('load', function load() {
-        //             browser.contentWindow.removeEventListener('load', load, false);
+                var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
 
-        //             browser.contentDocument.body.innerHTML = 'hello world';
-        //         }, false);
-        //     }
-        // }
-        // catch (ex) {
-        //     console.error('data: ', ex.message, ex);
-        // }
+                browser.contentWindow.addEventListener('load', function load() {
+                    browser.contentWindow.removeEventListener('load', load, false);
+
+                    browser.contentDocument.body.innerHTML = 'Hello, markdown!';
+                }, false);
+            }
+        }
+        catch (ex) {
+            console.error('data: ', ex.message, ex);
+        }
     },
     register: function() {
         console.log('MarkdownDocumentObserver: registered');
@@ -229,9 +161,6 @@ var MarkdownDocumentObserver = Class({
     unregister: function() {
         console.log('MarkdownDocumentObserver: unregistered');
         Services.obs.removeObserver(this, this.topic);
-    },
-    initialize: function() {
-        console.log('MarkdownDocumentObserver: initialized');
     }
 });
 
@@ -243,6 +172,9 @@ Services.obs.addObserver(function() {
 
     console.log('MarkdownMimeTypeObserver: unregistered');
     registrar.unregisterFactory(MarkdownMimeTypeObserver.prototype.classID, MarkdownMimeTypeObserverFactory);
+
+    console.log('TestObserver: unregistered');
+    registrar.unregisterFactory(TestObserver.prototype.classID, TestObserverFactory);
 
     mdObserver.unregister();
 }, 'xpcom-will-shutdown');
