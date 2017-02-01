@@ -904,3 +904,6 @@ section {
   font-weight: bold;
 }
 
+.emojione {
+  margin: 0 .1em -.2ex;
+}
