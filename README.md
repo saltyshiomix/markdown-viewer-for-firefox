@@ -1,2 +1,2 @@
-# markdown-viewer
-Simple markdown viewer for Firefox addon
+# GitHub like Markdown Viewer for Firefox add-on
+- Support gfm(GitHub Flavored Markdown) and stylesheet
