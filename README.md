@@ -1,9 +1,7 @@
 # GitHub like Markdown Viewer for Firefox add-on
+![Markdown Viewer Feature Image](http://imgur.com/a/ah2hQ)
 
-## Feature
-- Working on Windows, MacOS and most of Linux of Firefox
-- Support GitHub Flavored Markdown
-- Available for emoji :+1:
-- Available for ASCII emoji :)
-- [x] GitHub like checkbox lists
-- Syntax code highlighting
+## Install
+- Download latest `signed/markdown_viewer_for_firefox-*-fx.xpi`
+- Drag & drop the xpi to your Firefox
+- Restart Firefox, and then see your local markdown file!
