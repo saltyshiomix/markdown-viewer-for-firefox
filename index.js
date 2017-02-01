@@ -279,6 +279,16 @@ var MarkdownDocumentObserver = Class({
 </div>
 `;
 
+                    var title = browser.contentDocument.body.querySelector('h1');
+                    if (title) {
+                        title = title.textContent;
+                    }
+                    else {
+                        title = browser.contentDocument.body.textContent.trim().split("\n")[0];
+                    }
+                    title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
+                    browser.contentDocument.title = title;
+
                 }, false);
             }
         }
