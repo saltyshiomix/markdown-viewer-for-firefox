@@ -234,7 +234,7 @@ var MarkdownDocumentObserver = Class({
     onStartRequest: function(aRequest, aContext) {},
     onStopRequest: function(aRequest, aContext, aStatusCode) {},
     onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
-        this.content = '';
+        var content = '';
 
         var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
 
@@ -249,14 +249,11 @@ var MarkdownDocumentObserver = Class({
             try {
                 var str = {};
                 while (cs.readString(4096, str)) {
-                    this.content += str.value;
+                    content += str.value;
                 }
             }
             finally {
                 cs.close();
-
-                // I don't know why this is needed
-                var content = this.content;
 
                 browser.contentWindow.addEventListener('load', function load() {
                     browser.contentWindow.removeEventListener('load', load, false);
