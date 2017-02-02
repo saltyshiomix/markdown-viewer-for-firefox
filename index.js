@@ -185,9 +185,6 @@ MarkdownMimeTypeObserver.prototype = {
         si = si.QueryInterface(Ci.nsIScriptableInputStream);
         si.init(aInputStream);
         this.html += si.read(aCount);
-
-        // Fire the event
-        Services.obs.notifyObservers({}, 'chrome-document-global-created', aInputStream);
     },
 
     asyncConvertData: function(aFromType, aToType, aListener, aCtxt) {
@@ -220,7 +217,7 @@ registrar.registerFactory(
 var MarkdownDocumentObserver = Class({
     extends: xpcom.Unknown,
     interfaces: ['nsIObserver'],
-    topic: 'chrome-document-global-created',
+    topic: 'content-document-global-created',
     get wrappedJSObject() this,
 
     observe: function(aSubject, aTopic, aData) {
