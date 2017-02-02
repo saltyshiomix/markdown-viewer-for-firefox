@@ -905,7 +905,23 @@ section {
 }
 
 .emojione {
-  margin: 0 .1em -.2ex;
+  font-size: inherit;
+  height: 2.8ex;
+  width: 2.8ex;
+  min-height: 18px;
+  min-width: 18px;
+  display: inline-block;
+  margin: -.2ex .15em .2ex;
+  line-height: normal;
+  vertical-align: middle;
+}
+
+img.emojione {
+  width: auto;
+}
+
+.emojione {
+  /*margin: 0 .1em -.2ex;*/
 }
 
 li.gfm-checkbox {
