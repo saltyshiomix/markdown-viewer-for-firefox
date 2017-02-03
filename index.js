@@ -11,9 +11,9 @@ Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 
 var registrar = components.manager.QueryInterface(Ci.nsIComponentRegistrar);
-var hljs = require('resource://markdown-viewer/data/js/highlight.js');
-var marked = require('resource://markdown-viewer/data/js/marked.js');
-var emojione = require('resource://markdown-viewer/data/js/emojione.js');
+var hljs = require('resource://markdown-viewer/data/js/lib/highlight.js');
+var marked = require('resource://markdown-viewer/data/js/lib/marked.js');
+var emojione = require('resource://markdown-viewer/data/js/lib/emojione.js');
 
 var renderer = new marked.Renderer();
 
