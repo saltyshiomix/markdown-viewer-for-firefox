@@ -69,7 +69,8 @@ function MarkdownConverter(marked, hljs, emojione) {
                 insertToc(this.toc, tocObj, 0);
             }
         } catch (e) {
-            this.toc = [];
+            // May be index out of range exception
+            insertToc(this.toc, tocObj, 0);
         }
 
         return '<h'
