@@ -151,9 +151,16 @@ var MarkdownDocumentObserver = Class({
 
                     browser.contentDocument.body.innerHTML = `
 <div class="container">
-    <article class="markdown-body">
-        ${md.render(content)}
-    </article>
+    <div class="columns">
+        <div class="column is-three-quarters">
+            <article class="markdown-body">
+                ${md.render(content)}
+            </article>
+        </div>
+        <div class="column">
+            ${md.getTocHtml()}
+        </div>
+    </div>
 </div>
 `;
 
