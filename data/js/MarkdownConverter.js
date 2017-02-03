@@ -56,16 +56,20 @@ function MarkdownConverter(marked, hljs, emojione) {
             children: []
         };
 
-        if (this.topLevel) {
-            if (level < this.topLevel) {
+        try {
+            if (this.topLevel) {
+                if (level < this.topLevel) {
+                    this.topLevel = level;
+                    insertToc(this.toc, tocObj, 0);
+                } else {
+                    insertToc(this.toc, tocObj, level - this.topLevel);
+                }
+            } else {
                 this.topLevel = level;
                 insertToc(this.toc, tocObj, 0);
-            } else {
-                insertToc(this.toc, tocObj, level - this.topLevel);
             }
-        } else {
-            this.topLevel = level;
-            insertToc(this.toc, tocObj, 0);
+        } catch (e) {
+            this.toc = [];
         }
 
         return '<h'
