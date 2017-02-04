@@ -1,30 +1,5 @@
 var EXPORTED_SYMBOLS = ['MarkdownConverter'];
 
-function insertToc(toc, tocObj, depth) {
-    switch (depth) {
-        case 0:
-            toc.push(tocObj);
-            break;
-        case 1:
-            toc[toc.length - 1].children.push(tocObj);
-            break;
-        case 2:
-            toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.push(tocObj);
-            break;
-        case 3:
-            toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children.push(tocObj);
-            break;
-        case 4:
-            toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children.length - 1].children.push(tocObj);
-            break;
-        case 5:
-            toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children[toc[toc.length - 1].children[toc[toc.length - 1].children.length - 1].children.length - 1].children.length - 1].children.length - 1].children.push(tocObj);
-            break;
-        default:
-            break;
-    }
-}
-
 function MarkdownConverter(marked, hljs, emojione) {
     this.marked = marked;
     this.toc = [];
@@ -56,21 +31,37 @@ function MarkdownConverter(marked, hljs, emojione) {
             children: []
         };
 
-        try {
-            if (this.topLevel) {
-                if (level < this.topLevel) {
-                    this.topLevel = level;
-                    insertToc(this.toc, tocObj, 0);
-                } else {
-                    insertToc(this.toc, tocObj, level - this.topLevel);
-                }
-            } else {
+        var children = this.toc;
+        var parentChildren;
+        var lastChild;
+        while (children.length) {
+            parentChildren = children;
+            lastChild = children[children.length - 1];
+            children = lastChild.children;
+        }
+        if (!this.toc.length) {
+            this.topLevel = level;
+            this.toc.push(tocObj);
+        } else {
+            if (level <= this.topLevel) {
                 this.topLevel = level;
-                insertToc(this.toc, tocObj, 0);
+                this.toc.push(tocObj);
+            } else if (lastChild.level < level) {
+                children.push(tocObj);
+            } else if (lastChild.level === level) {
+                parentChildren.push(tocObj);
+            } else {
+                children = this.toc;
+                while (children.length) {
+                    parentChildren = children;
+                    lastChild = children[children.length - 1];
+                    if (lastChild.level === level) {
+                        parentChildren.push(tocObj);
+                        break;
+                    }
+                    children = lastChild.children;
+                }
             }
-        } catch (e) {
-            // May be index out of range exception
-            insertToc(this.toc, tocObj, 0);
         }
 
         return '<h'
