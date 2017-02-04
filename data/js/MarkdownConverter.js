@@ -103,15 +103,12 @@ function MarkdownConverter(marked, hljs, emojione) {
             }
         }
 
-        return '<h'
-            + level
-            + ' id="'
-            + id
-            + '">'
-            + emojione.toImage(text)
-            + '</h'
-            + level
-            + '>\n';
+        var fragments = [];
+        fragments.push('<h' + level + ' class="heading" id="' + id + '">');
+        fragments.push(emojione.toImage(text));
+        fragments.push('</h' + level + '>\n');
+
+        return fragments.join('');
     };
 
     renderer.hr = () => {

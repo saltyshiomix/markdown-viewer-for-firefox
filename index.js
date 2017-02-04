@@ -174,6 +174,53 @@ var MarkdownDocumentObserver = Class({
                             title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
                         }
                         $('head > title').text(title);
+
+                        var scrolled = false;
+                        var clickMenuAnimating = false;
+                        var activeClass = 'is-active animated fadeIn';
+                        $('.menu-list a:first').addClass(activeClass);
+                        $('.menu-list a').on('click', function(e) {
+                            clickMenuAnimating = true;
+                            $('.menu-list a').removeClass(activeClass);
+                            $(this).addClass(activeClass);
+                            $('html,body').animate({
+                                scrollTop: $($(this).attr('href')).offset().top
+                            }, {
+                                complete: function() {
+                                    browser.contentWindow.setTimeout(function() {
+                                        scrolled = false;
+                                        clickMenuAnimating = false;
+                                    }, 300);
+                                },
+                                queue: false
+                            });
+                        });
+
+                        $(browser.contentWindow).on('scroll', function() {
+                            scrolled = true;
+                        });
+                        browser.contentWindow.setInterval(function() {
+                            if (scrolled && !clickMenuAnimating) {
+                                var $prevHeading = null;
+                                var hasDetect = false;
+                                var scroll = $(browser.contentWindow).scrollTop();
+                                $('.heading').each(function() {
+                                    if (!hasDetect) {
+                                        if (scroll + 5 < $(this).offset().top) {
+                                            if (!$prevHeading) {
+                                                $prevHeading = $(this);
+                                            }
+                                            $('.menu-list a').removeClass(activeClass);
+                                            $('.menu-list a[href="#'+ $prevHeading.attr('id') +'"]').addClass(activeClass);
+                                            hasDetect = true;
+                                        } else {
+                                            $prevHeading = $(this);
+                                        }
+                                    }
+                                });
+                                scrolled = false;
+                            }
+                        }, 150);
                     });
 
                 }, false);
