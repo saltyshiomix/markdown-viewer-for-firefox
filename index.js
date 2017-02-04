@@ -178,6 +178,7 @@ var MarkdownDocumentObserver = Class({
                         var scrolled = false;
                         var clickMenuAnimating = false;
                         var activeClass = 'is-active animated fadeIn';
+
                         $('.menu-list a:first').addClass(activeClass);
                         $('.menu-list a').on('click', function(e) {
                             clickMenuAnimating = true;

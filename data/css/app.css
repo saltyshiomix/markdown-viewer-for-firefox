@@ -1708,9 +1708,11 @@ li.gfm-checkbox > input[type="checkbox"] {
 
 .menu {
   position:fixed;
+  left: auto;
   height: 100vh;
   overflow: scroll;
   padding: 48px 0;
+  margin-right: 8%;
   font-size: 1rem;
 }
 
