@@ -7,10 +7,49 @@ function MarkdownConverter(marked, hljs, emojione) {
     var renderer = new marked.Renderer();
 
     renderer.code = (code, lang) => {
-        if (lang && hljs.getLanguage(lang)) {
-            return '<pre class="hljs"><code class="'+ lang +'">'+ hljs.highlight(lang, code).value +'</code></pre>';
+        var fragments = [];
+        if (lang) {
+            if (lang.indexOf(':') === -1) {
+                if (hljs.getLanguage(lang)) {
+                    fragments.push('<pre class="hljs">');
+                    fragments.push('<code class="'+ lang +'">');
+                    fragments.push(hljs.highlight(lang, code).value);
+                    fragments.push('</code>');
+                    fragments.push('</pre>');
+                } else {
+                    fragments.push('<pre class="hljs">');
+                    fragments.push('<code>');
+                    fragments.push(hljs.highlightAuto(code).value);
+                    fragments.push('</code>');
+                    fragments.push('</pre>');
+                }
+            } else {
+                var _lang = lang.split(':')[0];
+                var filename = lang.substring(_lang.length + 1, lang.length);
+                if (hljs.getLanguage(_lang)) {
+                    fragments.push('<pre class="hljs has-filename">');
+                    fragments.push('<code class="'+ _lang +'">');
+                    fragments.push(hljs.highlight(_lang, code).value);
+                    fragments.push('</code>');
+                    fragments.push('<span class="filename">' + filename + '</span>');
+                    fragments.push('</pre>');
+                } else {
+                    fragments.push('<pre class="hljs has-filename">');
+                    fragments.push('<code>');
+                    fragments.push(hljs.highlightAuto(code).value);
+                    fragments.push('</code>');
+                    fragments.push('<span class="filename">' + filename + '</span>');
+                    fragments.push('</pre>');
+                }
+            }
+        } else {
+            fragments.push('<pre class="hljs">');
+            fragments.push('<code>');
+            fragments.push(hljs.highlightAuto(code).value);
+            fragments.push('</code>');
+            fragments.push('</pre>');
         }
-        return '<pre class="hljs"><code>'+ hljs.highlightAuto(code).value +'</code></pre>';
+        return fragments.join('');
     };
 
     renderer.blockquote = (quote) => {

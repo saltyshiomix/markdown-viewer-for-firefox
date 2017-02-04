@@ -1579,6 +1579,21 @@ section {
   background: #f8f8f8;
 }
 
+.hljs.has-filename {
+  position: relative;
+  padding-top: 28px;
+}
+
+.hljs.has-filename .filename {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: gray;
+  background-color: #eee;
+  padding: 2px 8px;
+  font-size: .8rem;
+}
+
 .hljs-comment,
 .hljs-quote {
   color: #998;
