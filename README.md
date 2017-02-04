@@ -1,5 +1,5 @@
 # GitHub like Markdown Viewer for Firefox add-on
-![Markdown Viewer for Firefox add-on Image](http://i.imgur.com/SO84N4c.png)
+![Markdown Viewer for Firefox add-on Image](https://i.imgur.com/IGN4GcX.png)
 
 ## Feature
 - GitHub flavored markdown
