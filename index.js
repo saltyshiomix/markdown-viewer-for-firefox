@@ -9,12 +9,14 @@ var tabUtils = require('sdk/tabs/utils');
 
 Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
+Cu.import('resource://markdown-viewer/data/js/MarkdownConverter.js');
 
 var registrar = components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+
+var $ = require('resource://markdown-viewer/data/js/lib/jquery.js');
 var hljs = require('resource://markdown-viewer/data/js/lib/highlight.js');
 var marked = require('resource://markdown-viewer/data/js/lib/marked.js');
 var emojione = require('resource://markdown-viewer/data/js/lib/emojione.js');
-Cu.import('resource://markdown-viewer/data/js/MarkdownConverter.js');
 
 var md = new MarkdownConverter(marked, hljs, emojione);
 
@@ -116,9 +118,7 @@ var MarkdownDocumentObserver = Class({
     onStopRequest: function(aRequest, aContext, aStatusCode) {},
     onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
         var content = '';
-
         var browser = tabUtils.getBrowserForTab(viewFor(tabs.activeTab));
-
         if (browser.contentDocument.contentType === 'text/html') {
             return;
         }
@@ -132,54 +132,54 @@ var MarkdownDocumentObserver = Class({
                 while (cs.readString(4096, str)) {
                     content += str.value;
                 }
-            }
-            finally {
+            } finally {
                 cs.close();
 
                 browser.contentWindow.addEventListener('load', function load() {
                     browser.contentWindow.removeEventListener('load', load, false);
 
-                    browser.contentDocument.body.innerHTML = '';
+                    var $ = require('resource://markdown-viewer/data/js/lib/jquery.js')(browser.contentWindow);
 
-                    browser.contentDocument.head.innerHTML = `
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title></title>
-<link rel="stylesheet" href="resource://markdown-viewer/data/css/animate.css">
-<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">
-`;
+                    $('body').empty();
 
-                    browser.contentDocument.body.innerHTML = `
-<div class="container">
-    <div class="columns">
-        <div class="column is-three-quarters">
-            <article class="markdown-body animated fadeInUpBig">
-                ${md.render(content)}
-            </article>
-        </div>
-        <div class="column">
-            ${md.getTocHtml()}
-        </div>
-    </div>
-</div>
-`;
+                    var headFragments = [];
+                    headFragments.push('<meta charset="utf-8">');
+                    headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
+                    headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
+                    headFragments.push('<title>Markdown Viewer</title>');
+                    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/animate.css">');
+                    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
+                    $('head').empty().append(headFragments.join(''));
 
-                    var title = browser.contentDocument.body.querySelector('h1');
-                    if (title) {
-                        title = title.textContent;
-                    }
-                    else {
-                        title = browser.contentDocument.body.textContent.trim().split("\n")[0];
-                    }
-                    title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
-                    browser.contentDocument.title = title;
+                    var bodyFragments = [];
+                    bodyFragments.push('<div class="container">');
+                    bodyFragments.push('<div class="columns">');
+                    bodyFragments.push('<div class="column is-three-quarters">');
+                    bodyFragments.push('<article class="markdown-body animated fadeInUpBig">');
+                    bodyFragments.push(md.render(content));
+                    bodyFragments.push('</article>');
+                    bodyFragments.push('</div>');
+                    bodyFragments.push('<div class="column">');
+                    bodyFragments.push(md.getTocHtml());
+                    bodyFragments.push('</div>');
+                    bodyFragments.push('</div>');
+                    bodyFragments.push('</div>');
+
+                    $('body').delay(50).queue(function() {
+                        $(this).append(bodyFragments.join(''));
+
+                        var title = $('h1').eq(0).text();
+                        if (!title) {
+                            title = $('body').text().trim().split("\n")[0];
+                            title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
+                        }
+                        $('head > title').text(title);
+                    });
 
                 }, false);
             }
-        }
-        catch (ex) {
-            console.error('data: ', ex.message, ex);
+        } catch (e) {
+            console.error('data: ', e.message, e);
         }
     },
     register: function() {
