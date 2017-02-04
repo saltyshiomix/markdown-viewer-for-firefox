@@ -168,7 +168,7 @@ function MarkdownConverter(marked, hljs, emojione) {
 
 MarkdownConverter.prototype = {
     render: function(markdown) {
-        this._clearToc();
+        this.toc = [];
         return this.marked(markdown);
     },
     getToc: function() {
@@ -181,16 +181,13 @@ MarkdownConverter.prototype = {
 
         var fragments = [];
 
-        fragments.push('<aside class="menu box">');
+        fragments.push('<aside class="menu">');
         fragments.push('<ul class="menu-list">');
         fragments.push(this._composeListHtml(this.toc));
         fragments.push('</ul>');
         fragments.push('</aside>');
 
         return fragments.join('');
-    },
-    _clearToc: function() {
-        this.toc = [];
     },
     _composeListHtml: function(children) {
         var self = this;
