@@ -1688,7 +1688,7 @@ li.gfm-checkbox {
 li.gfm-checkbox > input[type="checkbox"] {
   margin-left: -18px;
   margin-right: 1px;
-  vertical-align: 1px;
+  vertical-align: 0;
 }
 
 .menu {
@@ -1705,6 +1705,7 @@ li.gfm-checkbox > input[type="checkbox"] {
 }
 
 .menu-list a {
+  text-decoration: none;
   border-radius: 2px;
   color: #4a4a4a;
   display: block;
