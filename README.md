@@ -1,5 +1,5 @@
 # GitHub flavored Markdown Viewer ( Firefox add-on )
-![Markdown Viewer for Firefox add-on Image](https://i.imgur.com/IGN4GcX.png)
+![GitHub flavored Markdown Viewer Image](https://i.imgur.com/W7qGfec.png)
 
 ## Features
 - GitHub flavored markdown
@@ -15,19 +15,23 @@
 - **Restart Firefox**, and then see your local markdown file!
 
 ## Usage
-### Simple usage
+### Simple Usage
 After installed, see local `file://**/*.md`
 
-### Full usage
+### Full Usage
 #### Bookmark
 - Click `Add New Bookmark`
-- Fill out `Title` and `Path`
+- Fill out
+    - `Title`: your favorite title
+    - `Path`: absolute path to your markdown file or directory
 - Click `Save`
 
 ![Bookmark your markdonw directories](https://i.imgur.com/VvtGjyi.png)
 
 #### Browse
-By saving directory path, you can browse markdowns like this:
+You can browse markdowns like this:
 
-#### Clear bookmarks
-By clicking `Clear All`, you can reset bookmarks.
+![Browse markdowns image](https://i.imgur.com/qZ20AcH.png)
+
+#### Clear
+By clicking `Clear All`, you can reset all bookmarks.
