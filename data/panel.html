@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Markdown Viewer</title>
+    <link rel="stylesheet" href="resource://markdown-viewer/data/css/font-awesome.css">
+    <link rel="stylesheet" href="resource://markdown-viewer/data/css/lib/bulma.css">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+        body {
+            font-family: "Raleway", sans-serif;
+        }
+        .panel-block-container {
+            position: relative;
+        }
+        .panel-block-container .delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <nav class="panel">
+            <p class="panel-heading">
+                Markdown Viewer
+            </p>
+            <div class="panel-block-container" v-for="bookmark in bookmarks">
+                <a
+                    class="panel-block"
+                    :href="bookmark.path"
+                    @click.prevent="showBookmark(bookmark.path)">
+                    <span class="panel-icon">
+                        <i class="fa fa-book"></i>
+                    </span>
+                    {{ bookmark.title }}
+                </a>
+                <span class="delete" @click="deleteBookmark(bookmark)"></span>
+            </div>
+            <div class="panel-block">
+                <button class="button is-primary is-outlined is-fullwidth" @click="toggleModal">
+                    Add new markdown directory
+                </button>
+            </div>
+        </nav>
+
+        <div class="modal" :class="{ 'is-active': isActiveModal }">
+            <div class="modal-background" @click="toggleModal"></div>
+            <div class="modal-content">
+                <label class="label" style="color:white;">Title</label>
+                <p class="control">
+                    <input class="input" type="text" v-model="newBookmark.title" autofocus @keyup.enter="addBookmark">
+                </p>
+                <label class="label" style="color:white;">Path ( file or directory )</label>
+                <p class="control">
+                    <input class="input" type="text" v-model="newBookmark.path" @keyup.enter="addBookmark">
+                </p>
+                <p class="control">
+                    <button
+                        class="button is-primary"
+                        @click.prevent="addBookmark">
+                        Add
+                    </button>
+                </p>
+            </div>
+            <button class="modal-close" @click="toggleModal"></button>
+        </div>
+    </div>
+</body>
+</html>
