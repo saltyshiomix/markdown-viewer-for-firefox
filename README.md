@@ -26,7 +26,7 @@ After installed, see local `file://**/*.md`
     - `Path`: absolute path to your markdown file or directory
 - Click `Save`
 
-![Bookmark your markdonw directories](https://i.imgur.com/VvtGjyi.png)
+![Bookmark your markdonw directories](https://i.imgur.com/lT3pkJj.png)
 
 #### Browse
 You can browse markdowns like this:
