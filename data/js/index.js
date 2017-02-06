@@ -76,7 +76,7 @@ if (isMarkdownFile) {
 
             var title = $('h1:first').text();
             if (!title) {
-                title = $(this).text().trim().split("\n")[0];
+                title = $('.markdown-body').text().trim().split("\n")[0];
                 title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
             }
             $('head > title').text(title);
