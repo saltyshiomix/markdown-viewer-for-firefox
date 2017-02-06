@@ -23,7 +23,7 @@ var app = new Vue({
             }
 
             var path = this.newBookmark.path;
-            if (!/(\/|\\)$/.test(path)) {
+            if (!/(\/|\\)$/.test(path) && !/\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i.test(path)) {
                 path += path.indexOf('\\') === -1 ? '/' : '\\';
             }
             if (!/file:\/\/+/.test(path) && navigator.platform.indexOf('Win') === -1) {
