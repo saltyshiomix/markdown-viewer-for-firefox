@@ -63,6 +63,10 @@ var app = new Vue({
                 self.port.emit('delete-bookmark', bookmark);
             }
         },
+        clearAllData: function() {
+            this.bookmarks = [];
+            self.port.emit('clear-all-data');
+        },
         toggleModal: function() {
             this.isActiveModal = !this.isActiveModal;
         }

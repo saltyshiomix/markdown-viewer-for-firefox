@@ -145,7 +145,7 @@ pageMod.PageMod({
     onAttach: function(worker) {
         var emitted = false;
         ss.storage.directories.forEach(function(dir) {
-            if (tabs.activeTab.url.indexOf(dir.path) !== -1) {
+            if (!emitted && tabs.activeTab.url.indexOf(dir.path) !== -1) {
                 worker.port.emit('load-menus', dir.files);
                 emitted = true;
             }
@@ -191,4 +191,9 @@ panel.port.on('delete-bookmark', function(bookmark) {
     if (0 <= deleteIndex) {
         ss.storage.bookmarks.splice(deleteIndex, 1);
     }
+});
+
+panel.port.on('clear-all-data', function() {
+    ss.storage.bookmarks = [];
+    ss.storage.directories = [];
 });
