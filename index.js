@@ -143,32 +143,7 @@ pageMod.PageMod({
         './js/lib/highlight.js',
         './js/MarkdownConverter.js',
         './js/index.js'
-    ],
-    onAttach: function(worker) {
-        var emitted = false;
-        ss.storage.directories.forEach(function(dir) {
-            if (!emitted && tabs.activeTab.url.indexOf(dir.path) !== -1) {
-                worker.port.emit('load-menus', dir.files);
-                emitted = true;
-            }
-        });
-        if (!emitted) {
-            worker.port.emit('load-menus', []);
-        }
-
-        worker.port.on('load-directory', function(directory) {
-            var updated = false;
-            ss.storage.directories.forEach(function(dir) {
-                if (dir.path === directory.path) {
-                    dir.files = directory.files;
-                    updated = true;
-                }
-            });
-            if (!updated) {
-                ss.storage.directories.push(directory);
-            }
-        });
-    }
+    ]
 });
 
 panel.port.emit('load-bookmarks', ss.storage.bookmarks);

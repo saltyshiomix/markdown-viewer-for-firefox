@@ -1863,3 +1863,73 @@ a.box:active {
   background-color: #ff3860;
   color: #fff;
 }
+
+.table {
+  background-color: white;
+  color: #363636;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.table td,
+.table th {
+  border: 1px solid #dbdbdb;
+  border-width: 0 0 1px;
+  padding: 0.5em 0.75em;
+  vertical-align: top;
+}
+
+.table td.is-narrow,
+.table th.is-narrow {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.table th {
+  color: #363636;
+  text-align: left;
+}
+
+.table tr:hover {
+  background-color: #fafafa;
+}
+
+.table thead td,
+.table thead th {
+  border-width: 0 0 2px;
+  color: #7a7a7a;
+}
+
+.table tfoot td,
+.table tfoot th {
+  border-width: 2px 0 0;
+  color: #7a7a7a;
+}
+
+.table tbody tr:last-child td,
+.table tbody tr:last-child th {
+  border-bottom-width: 0;
+}
+
+.table.is-bordered td,
+.table.is-bordered th {
+  border-width: 1px;
+}
+
+.table.is-bordered tr:last-child td,
+.table.is-bordered tr:last-child th {
+  border-bottom-width: 1px;
+}
+
+.table.is-narrow td,
+.table.is-narrow th {
+  padding: 0.25em 0.5em;
+}
+
+.table.is-striped tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.table.is-striped tbody tr:nth-child(even):hover {
+  background-color: whitesmoke;
+}
