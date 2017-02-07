@@ -23,12 +23,19 @@ var app = new Vue({
             }
 
             var path = this.newBookmark.path;
-            if (!/(\/|\\)$/.test(path) && !/\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i.test(path)) {
-                path += path.indexOf('\\') === -1 ? '/' : '\\';
+
+            if (/\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?/i.test(path)) {
+                // .md file
+            } else if (!/(\/|\\)$/.test(path)) {
+                path += navigator.platform.indexOf('Win') === -1 ? '/' : '\\';
             }
-            if (!/file:\/\/+/.test(path) && navigator.platform.indexOf('Win') === -1) {
-                path = 'file://' + path;
+
+            if (!/file:\/\/+/.test(path)) {
+                path = navigator.platform.indexOf('Win') === -1
+                                ? 'file://' + path
+                                : 'file:///' + path.replace('\\', '/');
             }
+
             var bookmark = {
                 title: this.newBookmark.title,
                 path: path

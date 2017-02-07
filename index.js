@@ -143,7 +143,21 @@ pageMod.PageMod({
         './js/lib/highlight.js',
         './js/MarkdownConverter.js',
         './js/index.js'
-    ]
+    ],
+    onAttach: function(worker) {
+        worker.port.on('request-content', function(path) {
+            var fileIO = require("sdk/io/file");
+            var content = null;
+            if (fileIO.exists(path)) {
+                var reader = fileIO.open(path, "r");
+                if (!reader.closed) {
+                    content = reader.read();
+                    reader.close();
+                }
+            }
+            worker.port.emit('response-content', content);
+        });
+    }
 });
 
 panel.port.emit('load-bookmarks', ss.storage.bookmarks);

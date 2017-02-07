@@ -5,6 +5,15 @@ var markdownExtension = /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i;
 var url = decodeURIComponent(window.location.href);
 var isMarkdownFile = markdownExtension.test(url);
 var content = $('body pre').text();
+var beforeContent = content;
+
+function convertFileUrlToPath(fileUrl) {
+    if (navigator.platform.indexOf('Win') === -1) {
+        return fileUrl.replace('file://', '');
+    } else {
+        return fileUrl.replace('file:///', '').replace('/', '\\');
+    }
+}
 
 if ($('.file').length) {
     $('.file').each(function() {
@@ -28,6 +37,18 @@ if (isMarkdownFile || markdowns.length) {
 
 if (isMarkdownFile) {
     var md = new MarkdownConverter(marked, hljs, emojione);
+
+    window.setInterval(function() {
+        self.port.emit('request-content', convertFileUrlToPath(url));
+    }, 800);
+
+    self.port.on('response-content', function(afterContent) {
+        if (beforeContent !== afterContent) {
+            $('.markdown-body').html(md.render(afterContent));
+            $('.right-menu').html(md.getTocHtml());
+        }
+        beforeContent = afterContent;
+    });
 
     bodyFragments.push('<div class="container">');
     bodyFragments.push('<div class="columns">');
