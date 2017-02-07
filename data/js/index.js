@@ -4,6 +4,7 @@ var markdowns = [];
 var markdownExtension = /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i;
 var url = decodeURIComponent(window.location.href);
 var isMarkdownFile = markdownExtension.test(url);
+var isDirectory = $('.file, .dir').length;
 var content = $('body pre').text();
 var beforeContent = content;
 
@@ -24,8 +25,9 @@ if ($('.file').length) {
     });
 }
 
-if (isMarkdownFile || markdowns.length) {
+if (isMarkdownFile) {
     $('head, body').empty();
+
     headFragments.push('<meta charset="utf-8">');
     headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
     headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
@@ -33,9 +35,7 @@ if (isMarkdownFile || markdowns.length) {
     headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/lib/animate.css">');
     headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
     $('head').append(headFragments.join(''));
-}
 
-if (isMarkdownFile) {
     var md = new MarkdownConverter(marked, hljs, emojione);
 
     window.setInterval(function() {
@@ -123,7 +123,44 @@ if (isMarkdownFile) {
         }, 150);
     });
 
-} else if (markdowns.length) {
+} else if (isDirectory) {
+
+    var index = 1;
+    var data = {
+        dirs: [],
+        files: []
+    };
+
+    $('body > table:first > tbody').children('tr').each(function() {
+        var $tds = $(this).children('td');
+        var $file = $tds.eq(0).find('.file');
+        var $dir = $tds.eq(0).find('.dir');
+        var filename;
+        if ($file.length) {
+            filename = $file.attr('href');
+            data.files.push({
+                filename: $file.attr('href'),
+                size: $tds.eq(1).text(),
+                modified: $tds.eq(2).text()
+            });
+        } else if ($dir.length) {
+            filename = $dir.attr('href');
+            data.dirs.push({
+                filename: $dir.attr('href'),
+                size: $tds.eq(1).text(),
+                modified: $tds.eq(2).text()
+            });
+        }
+    });
+
+    $('head, body').empty();
+
+    headFragments.push('<meta charset="utf-8">');
+    headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
+    headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
+    headFragments.push('<title>Markdown Viewer</title>');
+    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/lib/bulma.css">');
+    $('head').append(headFragments.join(''));
 
     bodyFragments.push('<div class="container">');
     bodyFragments.push('<div class="columns">');
@@ -131,15 +168,37 @@ if (isMarkdownFile) {
     bodyFragments.push('<table class="table">');
     bodyFragments.push('<thead>');
     bodyFragments.push('<tr>');
-    bodyFragments.push('<th>No</th>');
-    bodyFragments.push('<th>Filename</th>');
+    bodyFragments.push('<th>Index</th>');
+    bodyFragments.push('<th>Name</th>');
+    bodyFragments.push('<th>Size</th>');
+    bodyFragments.push('<th>Last Modified</th>');
     bodyFragments.push('</tr>');
     bodyFragments.push('</thead>');
     bodyFragments.push('<tbody>');
-    markdowns.forEach(function(markdown, index) {
+    data.dirs.forEach(function(dir) {
         bodyFragments.push('<tr>');
-        bodyFragments.push('<td>' + index + '</td>');
-        bodyFragments.push('<td><a href="'+ markdown +'">'+ markdown.replace(markdownExtension, '') +'</a></td>');
+        bodyFragments.push('<td>' + (index++) + '</td>');
+        bodyFragments.push('<td>');
+        bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        bodyFragments.push('<a href="'+ dir.filename +'">'+ decodeURIComponent(dir.filename) +'</a>');
+        bodyFragments.push('</td>');
+        bodyFragments.push('<td>' + dir.size + '</td>');
+        bodyFragments.push('<td>' + dir.modified + '</td>');
+        bodyFragments.push('</tr>');
+    });
+    data.files.forEach(function(file) {
+        bodyFragments.push('<tr>');
+        bodyFragments.push('<td>' + (index++) + '</td>');
+        bodyFragments.push('<td>');
+        if (markdownExtension.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/markdown.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        }
+        bodyFragments.push('<a href="'+ file.filename +'">'+ decodeURIComponent(file.filename) +'</a>');
+        bodyFragments.push('</td>');
+        bodyFragments.push('<td>' + file.size + '</td>');
+        bodyFragments.push('<td>' + file.modified + '</td>');
         bodyFragments.push('</tr>');
     });
     bodyFragments.push('</tbody>');
