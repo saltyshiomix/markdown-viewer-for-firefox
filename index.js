@@ -84,9 +84,11 @@ registrar.registerFactory(
     MarkdownMimeTypeObserverFactory
 );
 
-Services.obs.addObserver(function() {
-    registrar.unregisterFactory(MarkdownMimeTypeObserver.prototype.classID, MarkdownMimeTypeObserverFactory);
-}, 'xpcom-will-shutdown');
+Services.obs.addObserver({
+    observe: function() {
+        registrar.unregisterFactory(MarkdownMimeTypeObserver.prototype.classID, MarkdownMimeTypeObserverFactory);
+    }
+}, 'xpcom-will-shutdown', false);
 
 // Main
 var { ToggleButton } = require('sdk/ui/button/toggle');
