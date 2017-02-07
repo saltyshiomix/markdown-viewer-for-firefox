@@ -191,7 +191,31 @@ if (isMarkdownFile) {
         bodyFragments.push('<td>' + (index++) + '</td>');
         bodyFragments.push('<td>');
         if (markdownExtension.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/markdown.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.(htm|html)/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/html.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.(scss|sass)/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/sass.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.css/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/css.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.json/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/json.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.js/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/js.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.php/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/php.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.rb/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/rb.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.vb/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/vb.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.ini/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/ini.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.png/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/png.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.(jpeg|jpg)/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/jpg.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        } else if (/\.gif/.test(file.filename)) {
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/gif.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
         } else {
             bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
         }
