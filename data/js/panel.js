@@ -1,6 +1,7 @@
 var app = new Vue({
     el: '#app',
     data: {
+        version: self.options.version,
         bookmarks: [],
         newBookmark: { title: '', path: '' },
         isActiveModal: false

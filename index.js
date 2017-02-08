@@ -104,6 +104,19 @@ if (!ss.storage.directories) {
     ss.storage.directories = [];
 }
 
+function readFileContent(path) {
+    var fileIO = require("sdk/io/file");
+    var content = null;
+    if (fileIO.exists(path)) {
+        var reader = fileIO.open(path, "r");
+        if (!reader.closed) {
+            content = reader.read();
+            reader.close();
+        }
+    }
+    return content;
+}
+
 var button = ToggleButton({
     id: 'markdown-viewer',
     label: 'Markdown Viewer',
@@ -129,6 +142,9 @@ var panel = panels.Panel({
         './js/lib/vue.js',
         './js/panel.js'
     ],
+    contentScriptOptions: {
+        version: require('./package.json').version
+    },
     onHide: function() {
         button.state('window', { checked: false });
     }
@@ -146,16 +162,7 @@ pageMod.PageMod({
     ],
     onAttach: function(worker) {
         worker.port.on('request-content', function(path) {
-            var fileIO = require("sdk/io/file");
-            var content = null;
-            if (fileIO.exists(path)) {
-                var reader = fileIO.open(path, "r");
-                if (!reader.closed) {
-                    content = reader.read();
-                    reader.close();
-                }
-            }
-            worker.port.emit('response-content', content);
+            worker.port.emit('response-content', readFileContent(path));
         });
     }
 });
