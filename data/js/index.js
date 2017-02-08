@@ -1,6 +1,5 @@
 var headFragments = [];
 var bodyFragments = [];
-var markdowns = [];
 var markdownExtension = /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i;
 var url = decodeURIComponent(window.location.href);
 var isMarkdownFile = markdownExtension.test(url);
@@ -14,15 +13,6 @@ function convertFileUrlToPath(fileUrl) {
     } else {
         return fileUrl.replace('file:///', '').replace(/\//g, '\\');
     }
-}
-
-if ($('.file').length) {
-    $('.file').each(function() {
-        var filename = decodeURIComponent($(this).attr('href'));
-        if (markdownExtension.test(filename)) {
-            markdowns.push(filename);
-        }
-    });
 }
 
 if (isMarkdownFile) {
