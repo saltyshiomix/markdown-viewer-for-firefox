@@ -12,7 +12,7 @@ function convertFileUrlToPath(fileUrl) {
     if (navigator.platform.indexOf('Win') === -1) {
         return fileUrl.replace('file://', '');
     } else {
-        return fileUrl.replace('file:///', '').replace('/', '\\');
+        return fileUrl.replace('file:///', '').replace(/\//g, '\\');
     }
 }
 
