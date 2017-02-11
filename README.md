@@ -31,7 +31,7 @@ After installed, see local `file://**/*.md`
 #### Browse
 You can browse markdowns like this:
 
-![Browse markdowns image](https://i.imgur.com/qZ20AcH.png)
+![Browse markdowns image](https://i.imgur.com/EHMhhFp.png)
 
 #### Clear
 By clicking `Clear All`, you can reset all bookmarks.
