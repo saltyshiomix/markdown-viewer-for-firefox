@@ -27,46 +27,12 @@ if (isMarkdownFile) {
     $('head').append(headFragments.join(''));
 
     var md = new MarkdownConverter(marked, hljs, emojione);
+    var isFirstView = true;
+    var scrolled = false;
+    var clickMenuAnimating = false;
+    var activeClass = 'is-active animated fadeIn';
 
-    window.setInterval(function() {
-        self.port.emit('request-content', convertFileUrlToPath(url));
-    }, 800);
-
-    self.port.on('response-content', function(afterContent) {
-        if (beforeContent !== afterContent) {
-            $('.markdown-body').html(md.render(afterContent));
-            $('.right-menu').html(md.getTocHtml());
-        }
-        beforeContent = afterContent;
-    });
-
-    bodyFragments.push('<div class="container">');
-    bodyFragments.push('<div class="columns">');
-    bodyFragments.push('<div class="column is-three-quarters">');
-    bodyFragments.push('<article class="markdown-body animated fadeInUpBig">');
-    bodyFragments.push(md.render(content));
-    bodyFragments.push('</article>');
-    bodyFragments.push('</div>');
-    bodyFragments.push('<div class="column right-menu">');
-    bodyFragments.push(md.getTocHtml());
-    bodyFragments.push('</div>');
-    bodyFragments.push('</div>');
-    bodyFragments.push('</div>');
-
-    $('body').delay(25).queue(function() {
-        $(this).append(bodyFragments.join(''));
-
-        var title = $('h1:first').text();
-        if (!title) {
-            title = $('.markdown-body').text().trim().split("\n")[0];
-            title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
-        }
-        $('head > title').text(title);
-
-        var scrolled = false;
-        var clickMenuAnimating = false;
-        var activeClass = 'is-active animated fadeIn';
-
+    function attachEventsToToc() {
         $('.right-menu a:first').addClass(activeClass);
         $('.right-menu a').on('click', function() {
             clickMenuAnimating = true;
@@ -84,34 +50,78 @@ if (isMarkdownFile) {
                 queue: false
             });
         });
+    }
 
-        $(window).on('scroll', function() {
-            scrolled = true;
-        });
-        window.setInterval(function() {
-            if (scrolled && !clickMenuAnimating) {
-                var $prevHeading = null;
-                var hasDetect = false;
-                var offset = 5;
-                var scroll = $(window).scrollTop();
-                $('.heading').each(function() {
-                    if (!hasDetect) {
-                        if (scroll + offset < $(this).offset().top) {
-                            if (!$prevHeading) {
-                                $prevHeading = $(this);
-                            }
-                            $('.right-menu a').removeClass(activeClass);
-                            $('.right-menu a[href="#'+ $prevHeading.attr('id') +'"]').addClass(activeClass);
-                            hasDetect = true;
-                        } else {
-                            $prevHeading = $(this);
-                        }
-                    }
+    self.port.emit('request-content', convertFileUrlToPath(url));
+
+    self.port.on('response-content', function(afterContent) {
+        if (isFirstView) {
+            isFirstView = false;
+
+            bodyFragments.push('<div class="container">');
+            bodyFragments.push('<div class="columns">');
+            bodyFragments.push('<div class="column is-three-quarters">');
+            bodyFragments.push('<article class="markdown-body animated fadeInUpBig">');
+            bodyFragments.push(md.render(content));
+            bodyFragments.push('</article>');
+            bodyFragments.push('</div>');
+            bodyFragments.push('<div class="column right-menu">');
+            bodyFragments.push(md.getTocHtml());
+            bodyFragments.push('</div>');
+            bodyFragments.push('</div>');
+            bodyFragments.push('</div>');
+
+            $('body').delay(25).queue(function() {
+                $(this).append(bodyFragments.join(''));
+
+                var title = $('h1:first').text();
+                if (!title) {
+                    title = $('.markdown-body').text().trim().split("\n")[0];
+                    title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
+                }
+                $('head > title').text(title);
+
+                attachEventsToToc();
+
+                $(window).on('scroll', function() {
+                    scrolled = true;
                 });
-                scrolled = false;
-            }
-        }, 150);
+                window.setInterval(function() {
+                    if (scrolled && !clickMenuAnimating) {
+                        var $prevHeading = null;
+                        var hasDetect = false;
+                        var offset = 5;
+                        var scroll = $(window).scrollTop();
+                        $('.heading').each(function() {
+                            if (!hasDetect) {
+                                if (scroll + offset < $(this).offset().top) {
+                                    if (!$prevHeading) {
+                                        $prevHeading = $(this);
+                                    }
+                                    $('.right-menu a').removeClass(activeClass);
+                                    $('.right-menu a[href="#'+ $prevHeading.attr('id') +'"]').addClass(activeClass);
+                                    hasDetect = true;
+                                } else {
+                                    $prevHeading = $(this);
+                                }
+                            }
+                        });
+                        scrolled = false;
+                    }
+                }, 150);
+            });
+        }
+        if (beforeContent !== afterContent) {
+            $('.markdown-body').html(md.render(afterContent));
+            $('.right-menu').html(md.getTocHtml());
+            attachEventsToToc();
+        }
+        beforeContent = afterContent;
     });
+
+    window.setInterval(function() {
+        self.port.emit('request-content', convertFileUrlToPath(url));
+    }, 800);
 
 } else if (isDirectory) {
 
