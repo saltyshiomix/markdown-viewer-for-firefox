@@ -100,21 +100,37 @@ var pageMod = require('sdk/page-mod');
 if (!ss.storage.bookmarks) {
     ss.storage.bookmarks = [];
 }
-if (!ss.storage.directories) {
-    ss.storage.directories = [];
-}
 
 function readFileContent(path) {
     var fileIO = require("sdk/io/file");
-    var content = null;
+
+    var data = {
+        dirs: [],
+        files: [],
+        content: null
+    };
+
     if (fileIO.exists(path)) {
         var reader = fileIO.open(path, "r");
         if (!reader.closed) {
-            content = reader.read();
+            data.content = reader.read();
             reader.close();
         }
     }
-    return content;
+
+    var dirPath = fileIO.dirname(path);
+    var files = fileIO.list(dirPath);
+
+    files.forEach(function(filename) {
+        var item = fileIO.join(dirPath, filename);
+        if (fileIO.isFile(item)) {
+            data.files.push(filename);
+        } else {
+            data.dirs.push(filename);
+        }
+    });
+
+    return data;
 }
 
 var button = ToggleButton({
@@ -193,5 +209,4 @@ panel.port.on('delete-bookmark', function(bookmark) {
 
 panel.port.on('clear-all-data', function() {
     ss.storage.bookmarks = [];
-    ss.storage.directories = [];
 });

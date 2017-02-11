@@ -54,19 +54,51 @@ if (isMarkdownFile) {
 
     self.port.emit('request-content', convertFileUrlToPath(url));
 
-    self.port.on('response-content', function(afterContent) {
+    self.port.on('response-content', function(data) {
         if (isFirstView) {
             isFirstView = false;
 
+            bodyFragments.push('<aside class="left-menu">');
+            bodyFragments.push('<p class="title">Markdown Viewer</p>');
+            bodyFragments.push('<ul>');
+            data.dirs.forEach(function(dir) {
+                bodyFragments.push('<li>');
+                bodyFragments.push('<a href="' + dir + '">');
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+                bodyFragments.push(dir);
+                bodyFragments.push('</a>');
+                bodyFragments.push('</li>');
+            });
+            data.files.forEach(function(file) {
+                bodyFragments.push('<li>');
+                if (url.indexOf(file) === -1) {
+                    bodyFragments.push('<a href="' + file + '">');
+                } else {
+                    bodyFragments.push('<a href="' + file + '" class="is-active">');
+                }
+                if (markdownExtension.test(file)) {
+                    bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+                } else {
+                    bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+                }
+                bodyFragments.push(file);
+                bodyFragments.push('</a>');
+                bodyFragments.push('</li>');
+            });
+            bodyFragments.push('</ul>');
+            bodyFragments.push('</aside>');
+
+            bodyFragments.push('<div class="main">');
             bodyFragments.push('<div class="container">');
             bodyFragments.push('<div class="columns">');
             bodyFragments.push('<div class="column is-three-quarters">');
             bodyFragments.push('<article class="markdown-body animated fadeInUpBig">');
-            bodyFragments.push(md.render(content));
+            bodyFragments.push(md.render(data.content));
             bodyFragments.push('</article>');
             bodyFragments.push('</div>');
             bodyFragments.push('<div class="column right-menu">');
             bodyFragments.push(md.getTocHtml());
+            bodyFragments.push('</div>');
             bodyFragments.push('</div>');
             bodyFragments.push('</div>');
             bodyFragments.push('</div>');
@@ -111,12 +143,12 @@ if (isMarkdownFile) {
                 }, 150);
             });
         }
-        if (beforeContent !== afterContent) {
-            $('.markdown-body').html(md.render(afterContent));
+        if (beforeContent !== data.content) {
+            $('.markdown-body').html(md.render(data.content));
             $('.right-menu').html(md.getTocHtml());
             attachEventsToToc();
         }
-        beforeContent = afterContent;
+        beforeContent = data.content;
     });
 
     window.setInterval(function() {
