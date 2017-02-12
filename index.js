@@ -110,7 +110,14 @@ function readFileContent(path) {
         content: null
     };
 
-    if (fileIO.exists(path)) {
+    if (!fileIO.exists(path)) {
+        return data;
+    }
+
+    var isFile = fileIO.isFile(path);
+
+    if (isFile) {
+        isFile
         var reader = fileIO.open(path, "r");
         if (!reader.closed) {
             data.content = reader.read();
@@ -123,10 +130,11 @@ function readFileContent(path) {
 
     files.forEach(function(filename) {
         var item = fileIO.join(dirPath, filename);
+
         if (fileIO.isFile(item)) {
-            data.files.push(filename);
+            data.files.push({ path: item, filename: filename });
         } else {
-            data.dirs.push(filename);
+            data.dirs.push({ path: (item + '/'), filename: filename });
         }
     });
 

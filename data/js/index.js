@@ -61,27 +61,31 @@ if (isMarkdownFile) {
             bodyFragments.push('<aside class="left-menu">');
             bodyFragments.push('<p class="title">Markdown Viewer</p>');
             bodyFragments.push('<ul>');
+            bodyFragments.push('<li><a href="./">');
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            bodyFragments.push('./');
+            bodyFragments.push('</a></li>');
             data.dirs.forEach(function(dir) {
                 bodyFragments.push('<li>');
-                bodyFragments.push('<a href="' + dir + '">');
+                bodyFragments.push('<a href="' + dir.path + '">');
                 bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-                bodyFragments.push(dir);
+                bodyFragments.push(dir.filename);
                 bodyFragments.push('</a>');
                 bodyFragments.push('</li>');
             });
             data.files.forEach(function(file) {
                 bodyFragments.push('<li>');
-                if (url.indexOf(file) === -1) {
-                    bodyFragments.push('<a href="' + file + '">');
+                if (new RegExp(file.filename + '$').test(url)) {
+                    bodyFragments.push('<a href="' + file.path + '" class="is-active">');
                 } else {
-                    bodyFragments.push('<a href="' + file + '" class="is-active">');
+                    bodyFragments.push('<a href="' + file.path + '">');
                 }
-                if (markdownExtension.test(file)) {
+                if (markdownExtension.test(file.filename)) {
                     bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
                 } else {
                     bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
                 }
-                bodyFragments.push(file);
+                bodyFragments.push(file.filename);
                 bodyFragments.push('</a>');
                 bodyFragments.push('</li>');
             });
@@ -187,82 +191,123 @@ if (isMarkdownFile) {
 
     $('head, body').empty();
 
-    headFragments.push('<meta charset="utf-8">');
-    headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
-    headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
-    headFragments.push('<title>Markdown Viewer</title>');
-    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/lib/bulma.css">');
-    $('head').append(headFragments.join(''));
+    self.port.emit('request-content', convertFileUrlToPath(url));
 
-    bodyFragments.push('<div class="container">');
-    bodyFragments.push('<div class="columns">');
-    bodyFragments.push('<div class="column is-12">');
-    bodyFragments.push('<table class="table">');
-    bodyFragments.push('<thead>');
-    bodyFragments.push('<tr>');
-    bodyFragments.push('<th>Index</th>');
-    bodyFragments.push('<th>Name</th>');
-    bodyFragments.push('<th>Size</th>');
-    bodyFragments.push('<th>Last Modified</th>');
-    bodyFragments.push('</tr>');
-    bodyFragments.push('</thead>');
-    bodyFragments.push('<tbody>');
-    data.dirs.forEach(function(dir) {
-        bodyFragments.push('<tr>');
-        bodyFragments.push('<td>' + (index++) + '</td>');
-        bodyFragments.push('<td>');
-        bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        bodyFragments.push('<a href="'+ dir.filename +'">'+ decodeURIComponent(dir.filename) +'</a>');
-        bodyFragments.push('</td>');
-        bodyFragments.push('<td>' + dir.size + '</td>');
-        bodyFragments.push('<td>' + dir.modified + '</td>');
-        bodyFragments.push('</tr>');
-    });
-    data.files.forEach(function(file) {
-        bodyFragments.push('<tr>');
-        bodyFragments.push('<td>' + (index++) + '</td>');
-        bodyFragments.push('<td>');
-        if (markdownExtension.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.(htm|html)/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/html.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.(scss|sass)/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/sass.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.css/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/css.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.json/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/json.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.js/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/js.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.php/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/php.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.rb/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/rb.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.vb/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/vb.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.ini/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/ini.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.png/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/png.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.(jpeg|jpg)/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/jpg.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else if (/\.gif/.test(file.filename)) {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/gif.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        } else {
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        }
-        bodyFragments.push('<a href="'+ file.filename +'">'+ decodeURIComponent(file.filename) +'</a>');
-        bodyFragments.push('</td>');
-        bodyFragments.push('<td>' + file.size + '</td>');
-        bodyFragments.push('<td>' + file.modified + '</td>');
-        bodyFragments.push('</tr>');
-    });
-    bodyFragments.push('</tbody>');
-    bodyFragments.push('</div>');
-    bodyFragments.push('</div>');
-    bodyFragments.push('</div>');
+    self.port.on('response-content', function(menuData) {
+        headFragments.push('<meta charset="utf-8">');
+        headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
+        headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
+        headFragments.push('<title>Markdown Viewer</title>');
+        headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
+        $('head').append(headFragments.join(''));
 
-    $('body').delay(25).queue(function() {
-        $(this).append(bodyFragments.join(''));
+        bodyFragments.push('<aside class="left-menu">');
+        bodyFragments.push('<p class="title">Markdown Viewer</p>');
+        bodyFragments.push('<ul>');
+        bodyFragments.push('<li><a href="../">');
+        bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+        bodyFragments.push('../');
+        bodyFragments.push('</a></li>');
+        menuData.dirs.forEach(function(dir) {
+            bodyFragments.push('<li>');
+            if (new RegExp(dir.filename + '\/$').test(url)) {
+                bodyFragments.push('<a href="' + dir.path + '" class="is-active">');
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir-open.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else {
+                bodyFragments.push('<a href="' + dir.path + '">');
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            }
+            bodyFragments.push(dir.filename);
+            bodyFragments.push('</a>');
+            bodyFragments.push('</li>');
+        });
+        menuData.files.forEach(function(file) {
+            bodyFragments.push('<li>');
+            bodyFragments.push('<a href="' + file.path + '">');
+            if (markdownExtension.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            }
+            bodyFragments.push(file.filename);
+            bodyFragments.push('</a>');
+            bodyFragments.push('</li>');
+        });
+        bodyFragments.push('</ul>');
+        bodyFragments.push('</aside>');
+
+        bodyFragments.push('<div class="main">')
+        bodyFragments.push('<div class="container">');
+        bodyFragments.push('<div class="columns">');
+        bodyFragments.push('<div class="column is-12">');
+        bodyFragments.push('<table class="table">');
+        bodyFragments.push('<thead>');
+        bodyFragments.push('<tr>');
+        bodyFragments.push('<th>Index</th>');
+        bodyFragments.push('<th>Name</th>');
+        bodyFragments.push('<th>Size</th>');
+        bodyFragments.push('<th>Last Modified</th>');
+        bodyFragments.push('</tr>');
+        bodyFragments.push('</thead>');
+        bodyFragments.push('<tbody>');
+        data.dirs.forEach(function(dir) {
+            bodyFragments.push('<tr>');
+            bodyFragments.push('<td>' + (index++) + '</td>');
+            bodyFragments.push('<td>');
+            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            bodyFragments.push('<a href="'+ dir.filename +'">'+ decodeURIComponent(dir.filename) +'</a>');
+            bodyFragments.push('</td>');
+            bodyFragments.push('<td>' + dir.size + '</td>');
+            bodyFragments.push('<td>' + dir.modified + '</td>');
+            bodyFragments.push('</tr>');
+        });
+        data.files.forEach(function(file) {
+            bodyFragments.push('<tr>');
+            bodyFragments.push('<td>' + (index++) + '</td>');
+            bodyFragments.push('<td>');
+            if (markdownExtension.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.(htm|html)/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/html.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.(scss|sass)/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/sass.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.css/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/css.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.json/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/json.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.js/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/js.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.php/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/php.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.rb/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/rb.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.vb/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/vb.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.ini/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/ini.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.png/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/png.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.(jpeg|jpg)/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/jpg.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else if (/\.gif/.test(file.filename)) {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/gif.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            } else {
+                bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/icons/file.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
+            }
+            bodyFragments.push('<a href="'+ file.filename +'">'+ decodeURIComponent(file.filename) +'</a>');
+            bodyFragments.push('</td>');
+            bodyFragments.push('<td>' + file.size + '</td>');
+            bodyFragments.push('<td>' + file.modified + '</td>');
+            bodyFragments.push('</tr>');
+        });
+        bodyFragments.push('</tbody>');
+        bodyFragments.push('</div>');
+        bodyFragments.push('</div>');
+        bodyFragments.push('</div>');
+        bodyFragments.push('</div>');
+
+        $('body').delay(25).queue(function() {
+            $(this).append(bodyFragments.join(''));
+        });
     });
 }
