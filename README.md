@@ -1,5 +1,5 @@
 # GitHub flavored Markdown Viewer ( Firefox add-on )
-![GitHub flavored Markdown Viewer Image](https://i.imgur.com/2hbKPTd.png)
+![GitHub flavored Markdown Viewer Image](https://i.imgur.com/50uLxrU.png)
 
 ## Features
 - GitHub flavored markdown
@@ -31,7 +31,7 @@ After installed, see local `file://**/*.md`
 #### Browse
 You can browse markdowns like this:
 
-![Browse markdowns image](https://i.imgur.com/EHMhhFp.png)
+![Browse markdowns image](https://i.imgur.com/50uLxrU.png)
 
 #### Clear
 By clicking `Clear All`, you can reset all bookmarks.
