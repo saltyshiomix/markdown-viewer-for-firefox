@@ -1,7 +1,7 @@
 {
   "title": "Markdown Viewer for Firefox",
   "name": "markdown-viewer",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Markdown viewer for Firefox",
   "main": "index.js",
   "author": "Yoshihide Shiono",
