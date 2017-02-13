@@ -207,10 +207,6 @@ if (/\?print$/.test(url)) {
             bodyFragments.push('<aside class="left-menu" id="particles-js">');
             bodyFragments.push('<p class="title">Markdown Viewer</p>');
             bodyFragments.push('<ul>');
-            bodyFragments.push('<li><a href="./">');
-            bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-            bodyFragments.push('./');
-            bodyFragments.push('</a></li>');
             data.dirs.forEach(function(dir) {
                 bodyFragments.push('<li>');
                 bodyFragments.push('<a href="' + dir.path + '">');
@@ -364,10 +360,6 @@ if (/\?print$/.test(url)) {
         bodyFragments.push('<aside class="left-menu" id="particles-js">');
         bodyFragments.push('<p class="title">Markdown Viewer</p>');
         bodyFragments.push('<ul>');
-        bodyFragments.push('<li><a href="../">');
-        bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
-        bodyFragments.push('../');
-        bodyFragments.push('</a></li>');
         menuData.dirs.forEach(function(dir) {
             bodyFragments.push('<li>');
             if (new RegExp(dir.filename + '\/$').test(url)) {

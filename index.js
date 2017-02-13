@@ -128,6 +128,7 @@ function readFileContent(path) {
     var dirPath = fileIO.dirname(path);
     var files = fileIO.list(dirPath);
 
+    data.dirs.push({ path: decodeURIComponent(dirPath + '/'), filename: '../' });
     files.forEach(function(filename) {
         var item = fileIO.join(dirPath, filename);
 
