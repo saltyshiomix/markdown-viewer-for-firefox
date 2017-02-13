@@ -132,9 +132,9 @@ function readFileContent(path) {
         var item = fileIO.join(dirPath, filename);
 
         if (fileIO.isFile(item)) {
-            data.files.push({ path: item, filename: filename });
+            data.files.push({ path: decodeURIComponent(item), filename: decodeURIComponent(filename) });
         } else {
-            data.dirs.push({ path: (item + '/'), filename: filename });
+            data.dirs.push({ path: decodeURIComponent(item + '/'), filename: decodeURIComponent(filename) });
         }
     });
 
