@@ -181,6 +181,7 @@ pageMod.PageMod({
         './js/lib/marked.js',
         './js/lib/emojione.js',
         './js/lib/highlight.js',
+        './js/lib/particles.js',
         './js/MarkdownConverter.js',
         './js/index.js'
     ],
