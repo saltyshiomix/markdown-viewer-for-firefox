@@ -1796,7 +1796,24 @@ li.gfm-checkbox > input[type="checkbox"] {
 }
 
 .main {
+  position: relative;
   margin-left: 240px;
+}
+
+.print {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: block;
+  border: #000 solid 1px;
+  border-radius: 20px;
+  padding: 6px;
+  opacity: .3;
+  z-index: 3;
+}
+
+.print:hover {
+  opacity: 1;
 }
 
 .right-menu .menu {

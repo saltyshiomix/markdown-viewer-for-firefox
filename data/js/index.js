@@ -129,7 +129,39 @@ function convertPathToFileUrl(path) {
     }
 }
 
-if (isMarkdownFile) {
+if (/\?print$/.test(url)) {
+
+    var content = $('body pre').text();
+
+    $('head, body').empty();
+
+    headFragments.push('<meta charset="utf-8">');
+    headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
+    headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
+    headFragments.push('<title>Markdown Viewer</title>');
+    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
+    $('head').append(headFragments.join(''));
+
+    var md = new MarkdownConverter(marked, hljs, emojione);
+
+    bodyFragments.push('<div class="container">');
+    bodyFragments.push('<article class="markdown-body">');
+    bodyFragments.push(md.render(content));
+    bodyFragments.push('</article>');
+    bodyFragments.push('</div>');
+
+    $('body').delay(25).queue(function() {
+        $(this).append(bodyFragments.join(''));
+
+        var title = $('h1:first').text();
+        if (!title) {
+            title = $('.markdown-body').text().trim().split("\n")[0];
+            title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
+        }
+        $('head > title').text(title);
+    });
+
+} else if (isMarkdownFile) {
     $('head, body').empty();
 
     headFragments.push('<meta charset="utf-8">');
@@ -207,6 +239,9 @@ if (isMarkdownFile) {
             bodyFragments.push('</aside>');
 
             bodyFragments.push('<div class="main">');
+            bodyFragments.push('<a class="print" href="?print">');
+            bodyFragments.push('<img class="image is-24x24" src="resource://markdown-viewer/data/img/print.png">');
+            bodyFragments.push('</a>');
             bodyFragments.push('<div class="container">');
             bodyFragments.push('<div class="columns">');
             bodyFragments.push('<div class="column is-three-quarters">');
@@ -361,7 +396,7 @@ if (isMarkdownFile) {
         bodyFragments.push('</ul>');
         bodyFragments.push('</aside>');
 
-        bodyFragments.push('<div class="main">')
+        bodyFragments.push('<div class="main">');
         bodyFragments.push('<div class="container">');
         bodyFragments.push('<div class="columns">');
         bodyFragments.push('<div class="column is-12">');
@@ -446,4 +481,5 @@ if (isMarkdownFile) {
             });
         });
     });
+
 }
