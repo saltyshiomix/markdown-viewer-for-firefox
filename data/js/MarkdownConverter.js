@@ -217,7 +217,7 @@ MarkdownConverter.prototype = {
 
         var fragments = [];
 
-        fragments.push('<aside class="menu animated fadeInRight">');
+        fragments.push('<aside class="menu box">');
         fragments.push('<ul class="menu-list">');
         fragments.push(this._composeListHtml(this.toc));
         fragments.push('</ul>');

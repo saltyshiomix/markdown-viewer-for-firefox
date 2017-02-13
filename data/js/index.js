@@ -196,6 +196,8 @@ if (/\?print$/.test(url)) {
                 queue: false
             });
         });
+
+        particlesJS('particles-js-toc', particlesConfig);
     }
 
     self.port.emit('request-content', convertFileUrlToPath(url));
@@ -245,7 +247,7 @@ if (/\?print$/.test(url)) {
             bodyFragments.push(md.render(data.content));
             bodyFragments.push('</article>');
             bodyFragments.push('</div>');
-            bodyFragments.push('<div class="column right-menu">');
+            bodyFragments.push('<div class="column right-menu animated fadeInRight" id="particles-js-toc">');
             bodyFragments.push(md.getTocHtml());
             bodyFragments.push('</div>');
             bodyFragments.push('</div>');
@@ -292,7 +294,7 @@ if (/\?print$/.test(url)) {
                 }, 150);
 
                 particlesJS('particles-js', particlesConfig);
-                $('.particles-js-canvas-el').css({
+                $('#particles-js .particles-js-canvas-el').css({
                     width: '240px',
                     height: '100vh',
                     position: 'fixed',
@@ -462,7 +464,7 @@ if (/\?print$/.test(url)) {
             $(this).append(bodyFragments.join(''));
 
             particlesJS('particles-js', particlesConfig);
-            $('.particles-js-canvas-el').css({
+            $('#particles-js .particles-js-canvas-el').css({
                 width: '240px',
                 height: '100vh',
                 position: 'fixed',
