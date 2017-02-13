@@ -1756,6 +1756,7 @@ li.gfm-checkbox > input[type="checkbox"] {
 
 .left-menu {
   position:fixed;
+  top: 0;
   left: auto;
   width: 240px;
   height: 100vh;
@@ -1764,7 +1765,7 @@ li.gfm-checkbox > input[type="checkbox"] {
 }
 
 .left-menu .title {
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 0.6em;
   color: #fff;
   font-size: 18px;
