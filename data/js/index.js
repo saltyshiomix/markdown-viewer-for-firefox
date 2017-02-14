@@ -211,7 +211,7 @@ if (/\?print$/.test(url)) {
             bodyFragments.push('<ul>');
             data.dirs.forEach(function(dir) {
                 bodyFragments.push('<li>');
-                bodyFragments.push('<a href="' + dir.path + '">');
+                bodyFragments.push('<a href="' + convertPathToFileUrl(dir.path) + '">');
                 bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
                 bodyFragments.push(dir.filename);
                 bodyFragments.push('</a>');
@@ -220,9 +220,9 @@ if (/\?print$/.test(url)) {
             data.files.forEach(function(file) {
                 bodyFragments.push('<li>');
                 if (new RegExp(file.filename + '$').test(url)) {
-                    bodyFragments.push('<a href="' + file.path + '" class="is-active">');
+                    bodyFragments.push('<a href="' + convertPathToFileUrl(file.path) + '" class="is-active">');
                 } else {
-                    bodyFragments.push('<a href="' + file.path + '">');
+                    bodyFragments.push('<a href="' + convertPathToFileUrl(file.path) + '">');
                 }
                 if (markdownExtension.test(file.filename)) {
                     bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
@@ -365,10 +365,10 @@ if (/\?print$/.test(url)) {
         menuData.dirs.forEach(function(dir) {
             bodyFragments.push('<li>');
             if (new RegExp(dir.filename + '\/$').test(url)) {
-                bodyFragments.push('<a href="' + dir.path + '" class="is-active">');
+                bodyFragments.push('<a href="' + convertPathToFileUrl(dir.path) + '" class="is-active">');
                 bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir-open.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
             } else {
-                bodyFragments.push('<a href="' + dir.path + '">');
+                bodyFragments.push('<a href="' + convertPathToFileUrl(dir.path) + '">');
                 bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/dir.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
             }
             bodyFragments.push(dir.filename);
@@ -377,7 +377,7 @@ if (/\?print$/.test(url)) {
         });
         menuData.files.forEach(function(file) {
             bodyFragments.push('<li>');
-            bodyFragments.push('<a href="' + file.path + '">');
+            bodyFragments.push('<a href="' + convertPathToFileUrl(file.path) + '">');
             if (markdownExtension.test(file.filename)) {
                 bodyFragments.push('<img class="image is-16x16" src="resource://markdown-viewer/data/img/menu/md.png" style="display: inline-block; vertical-align: -2px; margin-right: 8px;">');
             } else {
