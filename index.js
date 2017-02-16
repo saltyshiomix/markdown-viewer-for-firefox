@@ -183,7 +183,7 @@ pageMod.PageMod({
         mixManifest['/data/js/app.js'].replace('/data', '.')
     ],
     contentStyleFile: [
-        mixManifest["data/css/vendor.css"].replace('data', '.'),
+        mixManifest["data/css/app.vendor.css"].replace('data', '.'),
         mixManifest["/data/css/app.css"].replace('/data', '.')
     ],
     onAttach: function(worker) {
