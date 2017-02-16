@@ -175,16 +175,16 @@ var panel = panels.Panel({
     }
 });
 
+var mixManifest = require('./mix-manifest.json');
+
 pageMod.PageMod({
     include: 'file://*',
     contentScriptFile: [
-        './js/lib/jquery.js',
-        './js/lib/marked.js',
-        './js/lib/emojione.js',
-        './js/lib/highlight.js',
-        './js/lib/particles.js',
-        './js/MarkdownConverter.js',
-        './js/index.js'
+        mixManifest['/data/js/app.js'].replace('/data', '.')
+    ],
+    contentStyleFile: [
+        mixManifest["data/css/vendor.css"].replace('data', '.'),
+        mixManifest["/data/css/app.css"].replace('/data', '.')
     ],
     onAttach: function(worker) {
         worker.port.on('request-content', function(path) {

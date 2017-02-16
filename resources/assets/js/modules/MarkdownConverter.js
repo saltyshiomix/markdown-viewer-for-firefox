@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ['MarkdownConverter'];
+'use strict';
 
 function MarkdownConverter(marked, hljs, emojione) {
     this.marked = marked;
@@ -245,3 +245,5 @@ MarkdownConverter.prototype = {
         return fragments.join('');
     }
 };
+
+module.exports = MarkdownConverter;
