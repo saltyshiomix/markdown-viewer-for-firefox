@@ -2,16 +2,9 @@
 
 import './bootstrap';
 import path from 'path';
-import marked from 'marked';
-import hljs from 'highlight.js';
-import emojione from 'emojione';
 // import FileUtil from './modules/FileUtil';
 import MarkdownConverter from './modules/MarkdownConverter';
 import particlesConfig from './particles.json';
-
-emojione.imageType = 'png';
-emojione.ascii = false;
-emojione.imagePathPNG = 'resource://markdown-viewer/data/img/emoji/';
 
 let headFragments = [];
 let bodyFragments = [];
@@ -62,7 +55,7 @@ if (isPrintPreview) {
     headFragments.push('<title>Markdown Viewer</title>');
     $document.find('head').append(headFragments.join(''));
 
-    const md = new MarkdownConverter(marked, hljs, emojione);
+    const md = new MarkdownConverter();
 
     bodyFragments.push('<div class="container">');
     bodyFragments.push('<article class="markdown-body">');
@@ -85,7 +78,7 @@ if (isPrintPreview) {
     $document.find('head').append(headFragments.join(''));
 
     const activeClass = 'is-active animated fadeIn';
-    const md = new MarkdownConverter(marked, hljs, emojione);
+    const md = new MarkdownConverter();
     let isFirstView = true;
     let scrolled = false;
     let clickMenuAnimating = false;

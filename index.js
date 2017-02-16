@@ -96,6 +96,7 @@ var ss = require('sdk/simple-storage');
 var tabs = require('sdk/tabs');
 var panels = require('sdk/panel');
 var pageMod = require('sdk/page-mod');
+var mixManifest = require('./mix-manifest.json');
 
 if (!ss.storage.bookmarks) {
     ss.storage.bookmarks = [];
@@ -159,8 +160,6 @@ var button = ToggleButton({
     }
 });
 
-var mixManifest = require('./mix-manifest.json');
-
 var panel = panels.Panel({
     width: 320,
     height: 420,
@@ -177,22 +176,6 @@ var panel = panels.Panel({
     ],
     onHide: function() {
         button.state('window', { checked: false });
-    }
-});
-
-pageMod.PageMod({
-    include: 'file://*',
-    contentScriptFile: [
-        mixManifest['/data/js/app.js'].replace('/data', '.')
-    ],
-    contentStyleFile: [
-        mixManifest['data/css/app.vendor.css'].replace('data', '.'),
-        mixManifest['/data/css/app.css'].replace('/data', '.')
-    ],
-    onAttach: function(worker) {
-        worker.port.on('request-content', function(path) {
-            worker.port.emit('response-content', readFileContent(path));
-        });
     }
 });
 
@@ -222,4 +205,20 @@ panel.port.on('delete-bookmark', function(bookmark) {
 
 panel.port.on('clear-all-data', function() {
     ss.storage.bookmarks = [];
+});
+
+pageMod.PageMod({
+    include: 'file://*',
+    contentScriptFile: [
+        mixManifest['/data/js/app.js'].replace('/data', '.')
+    ],
+    contentStyleFile: [
+        mixManifest['data/css/app.vendor.css'].replace('data', '.'),
+        mixManifest['/data/css/app.css'].replace('/data', '.')
+    ],
+    onAttach: function(worker) {
+        worker.port.on('request-content', function(path) {
+            worker.port.emit('response-content', readFileContent(path));
+        });
+    }
 });
