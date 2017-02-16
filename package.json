@@ -1,15 +1,36 @@
 {
   "title": "Markdown Viewer for Firefox",
   "name": "markdown-viewer",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Markdown viewer for Firefox",
   "main": "index.js",
-  "author": "Yoshihide Shiono",
   "engines": {
     "firefox": ">=38.0a1"
   },
-  "license": "MIT",
+  "scripts": {
+    "dev": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saltyshiomix/markdown-viewer-for-chrome.git"
+  },
   "keywords": [
     "markdown"
-  ]
+  ],
+  "author": "Yoshihide Shiono",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/saltyshiomix/markdown-viewer-for-chrome/issues"
+  },
+  "homepage": "https://github.com/saltyshiomix/markdown-viewer-for-chrome#readme",
+  "devDependencies": {
+    "emojione": "^2.2.7",
+    "highlight.js": "^9.9.0",
+    "jquery": "^3.1.1",
+    "laravel-mix": "^0.8.1",
+    "marked": "^0.3.6"
+  }
 }

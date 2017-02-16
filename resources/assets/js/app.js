@@ -1,117 +1,38 @@
-var headFragments = [];
-var bodyFragments = [];
-var markdownExtension = /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i;
-var url = decodeURIComponent(window.location.href);
-var isMarkdownFile = markdownExtension.test(url);
-var isDirectory = $('.file, .dir').length;
-var content = $('body pre').text();
-var beforeContent = content;
+'use strict';
 
-var particlesConfig = {
-  "particles": {
-    "number": {
-      "value": 360,
-      "density": {
-        "enable": true,
-        "value_area": 800
-      }
-    },
-    "color": {
-      "value": "#ffffff"
-    },
-    "shape": {
-      "type": "circle",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
-      },
-      "polygon": {
-        "nb_sides": 5
-      }
-    },
-    "opacity": {
-      "value": 1,
-      "random": true,
-      "anim": {
-        "enable": true,
-        "speed": 1,
-        "opacity_min": 0,
-        "sync": false
-      }
-    },
-    "size": {
-      "value": 3,
-      "random": true,
-      "anim": {
-        "enable": false,
-        "speed": 4,
-        "size_min": 0.3,
-        "sync": false
-      }
-    },
-    "line_linked": {
-      "enable": false,
-      "distance": 150,
-      "color": "#ffffff",
-      "opacity": 0.4,
-      "width": 1
-    },
-    "move": {
-      "enable": true,
-      "speed": 1,
-      "direction": "none",
-      "random": true,
-      "straight": false,
-      "out_mode": "out",
-      "bounce": false,
-      "attract": {
-        "enable": false,
-        "rotateX": 600,
-        "rotateY": 600
-      }
+import './bootstrap';
+import path from 'path';
+import marked from 'marked';
+import hljs from 'highlight.js';
+import emojione from 'emojione';
+// import FileUtil from './modules/FileUtil';
+import MarkdownConverter from './modules/MarkdownConverter';
+import particlesConfig from './particles.json';
+
+emojione.imageType = 'png';
+emojione.ascii = false;
+emojione.imagePathPNG = 'resource://markdown-viewer/data/img/emoji/';
+
+let headFragments = [];
+let bodyFragments = [];
+const markdownExtension = /\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?$/i;
+const url = decodeURIComponent(window.location.href);
+const menuUrl = path.dirname(url);
+const $document = $(document);
+const isPrintPreview = /\?print$/.test(url);
+const isMarkdownFile = markdownExtension.test(url);
+const isDirectory = $document.find('.file, .dir').length;
+let content = $document.find('body pre').text();
+let beforeContent = content;
+
+function setTitle($document) {
+    let title = $document.find('h1:first').text();
+    if (!title) {
+        title = $document.find('.markdown-body').text().trim().split("\n")[0];
+        title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
     }
-  },
-  "interactivity": {
-    "detect_on": "canvas",
-    "events": {
-      "onhover": {
-        "enable": false,
-        "mode": "bubble"
-      },
-      "onclick": {
-        "enable": false,
-        "mode": "repulse"
-      },
-      "resize": true
-    },
-    "modes": {
-      "grab": {
-        "distance": 400,
-        "line_linked": {
-          "opacity": 1
-        }
-      },
-      "bubble": {
-        "distance": 250,
-        "size": 0,
-        "duration": 2,
-        "opacity": 0,
-        "speed": 3
-      },
-      "repulse": {
-        "distance": 400,
-        "duration": 0.4
-      },
-      "push": {
-        "particles_nb": 4
-      },
-      "remove": {
-        "particles_nb": 2
-      }
-    }
-  },
-  "retina_detect": true
-};
+    $document.find('head > title').text(title);
+}
 
 function convertFileUrlToPath(fileUrl) {
     if (navigator.platform.indexOf('Win') === -1) {
@@ -129,20 +50,19 @@ function convertPathToFileUrl(path) {
     }
 }
 
-if (/\?print$/.test(url)) {
+if (isPrintPreview || isMarkdownFile) {
+    $document.find('head, body').empty();
+}
 
-    var content = $('body pre').text();
-
-    $('head, body').empty();
+if (isPrintPreview) {
 
     headFragments.push('<meta charset="utf-8">');
     headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
     headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
     headFragments.push('<title>Markdown Viewer</title>');
-    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
-    $('head').append(headFragments.join(''));
+    $document.find('head').append(headFragments.join(''));
 
-    var md = new MarkdownConverter(marked, hljs, emojione);
+    const md = new MarkdownConverter(marked, hljs, emojione);
 
     bodyFragments.push('<div class="container">');
     bodyFragments.push('<article class="markdown-body">');
@@ -150,41 +70,33 @@ if (/\?print$/.test(url)) {
     bodyFragments.push('</article>');
     bodyFragments.push('</div>');
 
-    $('body').delay(25).queue(function() {
+    $document.find('body').delay(25).queue(function() {
         $(this).append(bodyFragments.join(''));
 
-        var title = $('h1:first').text();
-        if (!title) {
-            title = $('.markdown-body').text().trim().split("\n")[0];
-            title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
-        }
-        $('head > title').text(title);
+        setTitle($document);
     });
 
 } else if (isMarkdownFile) {
-    $('head, body').empty();
 
     headFragments.push('<meta charset="utf-8">');
     headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
     headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
     headFragments.push('<title>Markdown Viewer</title>');
-    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/lib/animate.css">');
-    headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
-    $('head').append(headFragments.join(''));
+    $document.find('head').append(headFragments.join(''));
 
-    var md = new MarkdownConverter(marked, hljs, emojione);
-    var isFirstView = true;
-    var scrolled = false;
-    var clickMenuAnimating = false;
-    var activeClass = 'is-active animated fadeIn';
+    const activeClass = 'is-active animated fadeIn';
+    const md = new MarkdownConverter(marked, hljs, emojione);
+    let isFirstView = true;
+    let scrolled = false;
+    let clickMenuAnimating = false;
 
-    function attachEventsToToc() {
-        $('.right-menu a:first').addClass(activeClass);
-        $('.right-menu a').on('click', function() {
+    function attachEventsToToc($document) {
+        $document.find('#right-menu a:first').addClass(activeClass);
+        $document.find('#right-menu a').on('click', function() {
             clickMenuAnimating = true;
-            $('.right-menu a').removeClass(activeClass);
+            $document.find('#right-menu a').removeClass(activeClass);
             $(this).addClass(activeClass);
-            $('html,body').animate({
+            $document.find('html,body').animate({
                 scrollTop: $($(this).attr('href')).offset().top
             }, {
                 complete: function() {
@@ -197,7 +109,7 @@ if (/\?print$/.test(url)) {
             });
         });
 
-        particlesJS('particles-js-toc', particlesConfig);
+        particlesJS('right-menu', particlesConfig);
     }
 
     self.port.emit('request-content', convertFileUrlToPath(url));
@@ -206,7 +118,7 @@ if (/\?print$/.test(url)) {
         if (isFirstView) {
             isFirstView = false;
 
-            bodyFragments.push('<aside class="left-menu" id="particles-js">');
+            bodyFragments.push('<aside class="animated fadeInLeft" id="left-menu">');
             bodyFragments.push('<p class="title">Markdown Viewer</p>');
             bodyFragments.push('<ul>');
             data.dirs.forEach(function(dir) {
@@ -236,35 +148,32 @@ if (/\?print$/.test(url)) {
             bodyFragments.push('</ul>');
             bodyFragments.push('</aside>');
 
-            bodyFragments.push('<div class="main">');
-            bodyFragments.push('<a class="print" href="?print">');
+            bodyFragments.push('<div id="main">');
+            bodyFragments.push('<a class="print animated bounceInRight" href="?print">');
             bodyFragments.push('<img class="image is-24x24" src="resource://markdown-viewer/data/img/print.png">');
             bodyFragments.push('</a>');
             bodyFragments.push('<div class="container">');
-            bodyFragments.push('<div class="columns">');
-            bodyFragments.push('<div class="column is-three-quarters">');
             bodyFragments.push('<article class="markdown-body animated fadeInUpBig">');
             bodyFragments.push(md.render(data.content));
             bodyFragments.push('</article>');
             bodyFragments.push('</div>');
-            bodyFragments.push('<div class="column right-menu animated fadeInRight" id="particles-js-toc">');
+            bodyFragments.push('</div>');
+
+            bodyFragments.push('<div class="animated fadeInRight" id="right-menu">');
             bodyFragments.push(md.getTocHtml());
             bodyFragments.push('</div>');
-            bodyFragments.push('</div>');
-            bodyFragments.push('</div>');
-            bodyFragments.push('</div>');
 
-            $('body').delay(25).queue(function() {
+            $document.find('body').delay(25).queue(function() {
                 $(this).append(bodyFragments.join(''));
 
-                var title = $('h1:first').text();
+                var title = $document.find('h1:first').text();
                 if (!title) {
-                    title = $('.markdown-body').text().trim().split("\n")[0];
+                    title = $document.find('.markdown-body').text().trim().split("\n")[0];
                     title = title.trim().substr(0, 50).replace('<', '&lt;').replace('>', '&gt;');
                 }
-                $('head > title').text(title);
+                $document.find('head > title').text(title);
 
-                attachEventsToToc();
+                attachEventsToToc($document);
 
                 $(window).on('scroll', function() {
                     scrolled = true;
@@ -275,14 +184,14 @@ if (/\?print$/.test(url)) {
                         var hasDetect = false;
                         var offset = 5;
                         var scroll = $(window).scrollTop();
-                        $('.heading').each(function() {
+                        $document.find('.heading').each(function() {
                             if (!hasDetect) {
                                 if (scroll + offset < $(this).offset().top) {
                                     if (!$prevHeading) {
                                         $prevHeading = $(this);
                                     }
-                                    $('.right-menu a').removeClass(activeClass);
-                                    $('.right-menu a[href="#'+ $prevHeading.attr('id') +'"]').addClass(activeClass);
+                                    $document.find('#right-menu a').removeClass(activeClass);
+                                    $document.find('#right-menu a[href="#'+ $prevHeading.attr('id') +'"]').addClass(activeClass);
                                     hasDetect = true;
                                 } else {
                                     $prevHeading = $(this);
@@ -293,22 +202,13 @@ if (/\?print$/.test(url)) {
                     }
                 }, 150);
 
-                particlesJS('particles-js', particlesConfig);
-                $('#particles-js .particles-js-canvas-el').css({
-                    width: '240px',
-                    height: '100vh',
-                    position: 'fixed',
-                    top: 0,
-                    left: 'auto',
-                    'z-index': -1,
-                    'background-color': '#000'
-                });
+                particlesJS('left-menu', particlesConfig);
             });
         }
         if (beforeContent !== data.content) {
-            $('.markdown-body').html(md.render(data.content));
-            $('.right-menu').html(md.getTocHtml());
-            attachEventsToToc();
+            $document.find('.markdown-body').html(md.render(data.content));
+            $document.find('#right-menu').html(md.getTocHtml());
+            attachEventsToToc($document);
         }
         beforeContent = data.content;
     });
@@ -325,7 +225,7 @@ if (/\?print$/.test(url)) {
         files: []
     };
 
-    $('body > table:first > tbody').children('tr').each(function() {
+    $document.find('body > table:first > tbody').children('tr').each(function() {
         var $tds = $(this).children('td');
         var $file = $tds.eq(0).find('.file');
         var $dir = $tds.eq(0).find('.dir');
@@ -347,7 +247,7 @@ if (/\?print$/.test(url)) {
         }
     });
 
-    $('head, body').empty();
+    $document.find('head, body').empty();
 
     self.port.emit('request-content', convertFileUrlToPath(url));
 
@@ -356,10 +256,10 @@ if (/\?print$/.test(url)) {
         headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
         headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
         headFragments.push('<title>Markdown Viewer</title>');
-        headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
-        $('head').append(headFragments.join(''));
+        // headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
+        $document.find('head').append(headFragments.join(''));
 
-        bodyFragments.push('<aside class="left-menu" id="particles-js">');
+        bodyFragments.push('<aside class="animated fadeInLeft" id="left-menu">');
         bodyFragments.push('<p class="title">Markdown Viewer</p>');
         bodyFragments.push('<ul>');
         menuData.dirs.forEach(function(dir) {
@@ -390,7 +290,7 @@ if (/\?print$/.test(url)) {
         bodyFragments.push('</ul>');
         bodyFragments.push('</aside>');
 
-        bodyFragments.push('<div class="main">');
+        bodyFragments.push('<div id="dir-main">');
         bodyFragments.push('<div class="container">');
         bodyFragments.push('<div class="columns">');
         bodyFragments.push('<div class="column is-12">');
@@ -460,19 +360,10 @@ if (/\?print$/.test(url)) {
         bodyFragments.push('</div>');
         bodyFragments.push('</div>');
 
-        $('body').delay(25).queue(function() {
+        $document.find('body').delay(25).queue(function() {
             $(this).append(bodyFragments.join(''));
 
-            particlesJS('particles-js', particlesConfig);
-            $('#particles-js .particles-js-canvas-el').css({
-                width: '240px',
-                height: '100vh',
-                position: 'fixed',
-                top: 0,
-                left: 'auto',
-                'z-index': -1,
-                'background-color': '#000'
-            });
+            particlesJS('left-menu', particlesConfig);
         });
     });
 
