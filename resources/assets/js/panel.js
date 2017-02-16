@@ -1,4 +1,8 @@
-var app = new Vue({
+'use strict';
+
+window.Vue = require('vue');
+
+const app = new Vue({
     el: '#app',
     data: {
         version: self.options.version,
@@ -7,7 +11,7 @@ var app = new Vue({
         isActiveModal: false
     },
     created: function() {
-        var bookmarks = this.bookmarks;
+        let bookmarks = this.bookmarks;
         self.port.on('load-bookmarks', function(data) {
             data.forEach(function(datum) {
                 bookmarks.push({ title: datum.title, path: datum.path });
@@ -23,7 +27,7 @@ var app = new Vue({
                 return;
             }
 
-            var path = this.newBookmark.path;
+            let path = this.newBookmark.path;
 
             if (/\.m(arkdown|kdn?|d(o?wn)?)(\?.*)?(#.*)?/i.test(path)) {
                 // .md file
@@ -42,7 +46,7 @@ var app = new Vue({
                 path: path
             };
 
-            var alreadyRegistered = false;
+            let alreadyRegistered = false;
             this.bookmarks.forEach(function(b) {
                 if (b.path === path) {
                     alreadyRegistered = true;
@@ -60,7 +64,7 @@ var app = new Vue({
             this.isActiveModal = false;
         },
         deleteBookmark: function(bookmark) {
-            var deleteIndex = -1;
+            let deleteIndex = -1;
             this.bookmarks.forEach(function(b, i) {
                 if (b.path === bookmark.path) {
                     deleteIndex = i;

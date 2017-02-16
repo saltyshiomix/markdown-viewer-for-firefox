@@ -159,23 +159,26 @@ var button = ToggleButton({
     }
 });
 
+var mixManifest = require('./mix-manifest.json');
+
 var panel = panels.Panel({
     width: 320,
     height: 420,
     contentURL: './panel.html',
     contentScriptFile: [
-        './js/lib/vue.js',
-        './js/panel.js'
+        mixManifest['/data/js/panel.js'].replace('/data', '.')
     ],
     contentScriptOptions: {
         version: require('./package.json').version
     },
+    contentStyleFile: [
+        mixManifest['data/css/panel.vendor.css'].replace('data', '.'),
+        mixManifest['/data/css/panel.css'].replace('/data', '.')
+    ],
     onHide: function() {
         button.state('window', { checked: false });
     }
 });
-
-var mixManifest = require('./mix-manifest.json');
 
 pageMod.PageMod({
     include: 'file://*',
@@ -183,8 +186,8 @@ pageMod.PageMod({
         mixManifest['/data/js/app.js'].replace('/data', '.')
     ],
     contentStyleFile: [
-        mixManifest["data/css/app.vendor.css"].replace('data', '.'),
-        mixManifest["/data/css/app.css"].replace('/data', '.')
+        mixManifest['data/css/app.vendor.css'].replace('data', '.'),
+        mixManifest['/data/css/app.css'].replace('/data', '.')
     ],
     onAttach: function(worker) {
         worker.port.on('request-content', function(path) {
