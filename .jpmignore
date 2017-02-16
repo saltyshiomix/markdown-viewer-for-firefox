@@ -9,3 +9,5 @@
 .git
 .gitignore
 node_modules
+signed
+resources
