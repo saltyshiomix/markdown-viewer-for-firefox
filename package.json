@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saltyshiomix/markdown-viewer-for-chrome.git"
+    "url": "git+https://github.com/saltyshiomix/markdown-viewer-for-firefox.git"
   },
   "keywords": [
     "markdown"
@@ -23,9 +23,9 @@
   "author": "Yoshihide Shiono",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/saltyshiomix/markdown-viewer-for-chrome/issues"
+    "url": "https://github.com/saltyshiomix/markdown-viewer-for-firefox/issues"
   },
-  "homepage": "https://github.com/saltyshiomix/markdown-viewer-for-chrome#readme",
+  "homepage": "https://github.com/saltyshiomix/markdown-viewer-for-firefox#readme",
   "devDependencies": {
     "emojione": "^2.2.7",
     "highlight.js": "^9.9.0",
