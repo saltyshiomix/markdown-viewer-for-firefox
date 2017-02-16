@@ -1,7 +1,7 @@
 {
   "title": "Markdown Viewer for Firefox",
   "name": "markdown-viewer",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Markdown viewer for Firefox",
   "main": "index.js",
   "engines": {
