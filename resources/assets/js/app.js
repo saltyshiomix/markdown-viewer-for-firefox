@@ -2,7 +2,6 @@
 
 import './bootstrap';
 import path from 'path';
-// import FileUtil from './modules/FileUtil';
 import MarkdownConverter from './modules/MarkdownConverter';
 import particlesConfig from './particles.json';
 
@@ -60,6 +59,10 @@ if (isPrintPreview) {
     bodyFragments.push('<div class="container">');
     bodyFragments.push('<article class="markdown-body">');
     bodyFragments.push(md.render(content));
+    if (md.getAnnotations().length) {
+        bodyFragments.push('<hr>');
+        bodyFragments.push(md.getAnnotationsHtml());
+    }
     bodyFragments.push('</article>');
     bodyFragments.push('</div>');
 
@@ -148,6 +151,10 @@ if (isPrintPreview) {
             bodyFragments.push('<div class="container">');
             bodyFragments.push('<article class="markdown-body animated fadeInUpBig">');
             bodyFragments.push(md.render(data.content));
+            if (md.getAnnotations().length) {
+                bodyFragments.push('<hr>');
+                bodyFragments.push(md.getAnnotationsHtml());
+            }
             bodyFragments.push('</article>');
             bodyFragments.push('</div>');
             bodyFragments.push('</div>');
@@ -199,7 +206,13 @@ if (isPrintPreview) {
             });
         }
         if (beforeContent !== data.content) {
-            $document.find('.markdown-body').html(md.render(data.content));
+            let mdFragments = [];
+            mdFragments.push(md.render(data.content));
+            if (md.getAnnotations().length) {
+                mdFragments.push('<hr>');
+                mdFragments.push(md.getAnnotationsHtml());
+            }
+            $document.find('.markdown-body').html(mdFragments.join(''));
             $document.find('#right-menu').html(md.getTocHtml());
             attachEventsToToc($document);
         }
@@ -249,7 +262,6 @@ if (isPrintPreview) {
         headFragments.push('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
         headFragments.push('<meta name="viewport" content="width=device-width, initial-scale=1">');
         headFragments.push('<title>Markdown Viewer</title>');
-        // headFragments.push('<link rel="stylesheet" href="resource://markdown-viewer/data/css/app.css">');
         $document.find('head').append(headFragments.join(''));
 
         bodyFragments.push('<aside class="animated fadeInLeft" id="left-menu">');

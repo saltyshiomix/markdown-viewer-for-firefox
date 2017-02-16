@@ -12,6 +12,7 @@ class MarkdownConverter {
     constructor() {
         this.marked = marked;
         this.toc = [];
+        this.annotations = [];
 
         const renderer = new marked.Renderer();
 
@@ -187,6 +188,22 @@ class MarkdownConverter {
         };
 
         renderer.link = (href, title, text) => {
+            if (text.indexOf('^') === 0) {
+                const id = text.replace('^', '');
+                const annotation = href;
+                let annotationFragments = [];
+                annotationFragments.push('<p id="annotation'+ id +'"><small>');
+                annotationFragments.push('[^' + id + ']: ' + annotation);
+                annotationFragments.push('</small></p>');
+                this.annotations.push(annotationFragments.join(''));
+
+                let annotationTrigger = [];
+                annotationTrigger.push('<a class="annotation" href="#annotation'+ id +'">');
+                annotationTrigger.push('[' + text + ']');
+                annotationTrigger.push('</a>');
+
+                return annotationTrigger.join('');
+            }
             var out = '<a href="' + href + '"';
             if (title) {
                 out += ' title="' + title + '"';
@@ -213,6 +230,7 @@ class MarkdownConverter {
 
     render(markdown) {
         this.toc = [];
+        this.annotations = [];
         return marked(markdown);
     }
 
@@ -234,6 +252,14 @@ class MarkdownConverter {
         fragments.push('</aside>');
 
         return fragments.join('');
+    }
+
+    getAnnotations() {
+        return this.annotations;
+    }
+
+    getAnnotationsHtml() {
+        return this.annotations.join('');
     }
 
     _composeListHtml(children) {
