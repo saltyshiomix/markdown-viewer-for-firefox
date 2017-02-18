@@ -225,7 +225,16 @@ class MarkdownConverter {
             return emojione.toImage(text);
         };
 
-        this.marked.setOptions({ renderer: renderer });
+        this.marked.setOptions({
+            renderer: renderer,
+            gfm: true,
+            tables: true,
+            breaks: true,
+            pedantic: false,
+            sanitize: false,
+            smartLists: true,
+            smartypants: true
+        });
     }
 
     render(markdown) {
