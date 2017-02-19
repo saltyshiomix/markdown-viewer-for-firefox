@@ -105,7 +105,9 @@ if (isPrintPreview) {
             });
         });
 
-        particlesJS('right-menu', particlesConfig);
+        $('#right-menu').delay(100).queue(function() {
+            particlesJS('right-menu', particlesConfig);
+        });
     }
 
     self.port.emit('request-content', convertFileUrlToPath(url));
